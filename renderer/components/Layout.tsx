@@ -29,7 +29,7 @@ const Layout = ({
   }, []);
 
   const onCloseMainPasswordModal = () => {
-
+    setOpenMainPasswordModal(false);
   };
 
   return  (

@@ -1,8 +1,13 @@
-import { useEffect, } from 'react';
+import { useEffect, useState, } from 'react';
 import Link from 'next/link';
+import { Button, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
+import OtpURLModal from '../components/OtpURLModal';
 
 const IndexPage = () => {
+
+  const [isOpenOtpURLModal, setIsOpenOtpModal,] = useState(false);
+
   useEffect(() => {
     const handleMessage = (_event, args) => alert(args);
 
@@ -18,15 +23,25 @@ const IndexPage = () => {
     global.ipcRenderer.send('message', 'hi from next');
   };
 
+  const onClickAddOtp = () => {
+    setIsOpenOtpModal(true);
+  };
+
+  const onCloseOtpURLModal = () => {
+    setIsOpenOtpModal(false);
+  };
+
   return (
     <Layout title='Home | Next.js + TypeScript + Electron Example'>
       <h1>Hello Next.js 👋</h1>
       <button onClick={onSayHiClick}>Say hi to electron</button>
+      <Button onClick={onClickAddOtp}>추가</Button>
       <p>
         <Link href='/about'>
           <a>About</a>
         </Link>
       </p>
+      <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </Layout>
   );
 };
