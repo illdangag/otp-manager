@@ -1,7 +1,6 @@
 import { useEffect, } from 'react';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { PrimaryButton, } from '@fluentui/react';
 
 const IndexPage = () => {
   useEffect(() => {
@@ -22,7 +21,7 @@ const IndexPage = () => {
   return (
     <Layout title='Home | Next.js + TypeScript + Electron Example'>
       <h1>Hello Next.js 👋</h1>
-      <PrimaryButton text='Say hi to electron' allowDisabledFocus onClick={onSayHiClick}/>
+      <button onClick={onSayHiClick}>Say hi to electron</button>
       <p>
         <Link href='/about'>
           <a>About</a>
