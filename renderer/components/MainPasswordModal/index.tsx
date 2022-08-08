@@ -54,7 +54,9 @@ const MainPasswordModal = ({
   };
 
   const onClickSave = () => {
-    global.ipcRenderer.send('setMainPassword', password);
+    global.ipcRenderer.send('setMainPassword', {
+      password,
+    });
   };
 
   return (

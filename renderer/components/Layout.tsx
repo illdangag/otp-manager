@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 
 import MainPasswordModal from './MainPasswordModal';
+import { PasswordStatus, } from '../../electron-src/interfaces';
 
 type Props = {
   children: ReactNode
@@ -14,15 +15,21 @@ const Layout = ({
   title = 'This is the default title',
 }: Props) => {
 
+  const [password, setPassword,] = useState('');
   const [isOpenMainPasswordModal, setOpenMainPasswordModal,] = useState(false);
 
   useEffect(() => {
     const getSettingHandler = (_event, args) => {
-      const isMainPassword: boolean = args.mainPassword;
-      setOpenMainPasswordModal(!isMainPassword);
+      const passwordStatus: PasswordStatus = args;
+      console.log(passwordStatus);
+      if (passwordStatus.type === 'NOT_SETTING') {
+        setOpenMainPasswordModal(true);
+      }
     };
     global.ipcRenderer.addListener('getSetting', getSettingHandler);
-    global.ipcRenderer.send('getSetting');
+    global.ipcRenderer.send('getSetting', {
+      password,
+    });
     return () => {
       global.ipcRenderer.removeListener('getSetting', getSettingHandler);
     };

@@ -5,7 +5,7 @@ import {
   Button, Input, Text, InputGroup, InputRightElement,
 } from '@chakra-ui/react';
 import { useState, } from 'react';
-import { Otp, } from '../../../core/interfaces';
+import { Otp, } from '../../../electron-src/interfaces';
 
 interface Props {
   isOpen?: boolean,

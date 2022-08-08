@@ -27,6 +27,10 @@ const IndexPage = () => {
     setIsOpenOtpModal(true);
   };
 
+  const onClickClear = () => {
+    global.ipcRenderer.send('clear', {});
+  };
+
   const onCloseOtpURLModal = () => {
     setIsOpenOtpModal(false);
   };
@@ -36,6 +40,7 @@ const IndexPage = () => {
       <h1>Hello Next.js 👋</h1>
       <button onClick={onSayHiClick}>Say hi to electron</button>
       <Button onClick={onClickAddOtp}>추가</Button>
+      <Button onClick={onClickClear}>초기화</Button>
       <p>
         <Link href='/about'>
           <a>About</a>
