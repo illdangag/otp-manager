@@ -43,11 +43,6 @@ const IndexPage = () => {
       <button onClick={onSayHiClick}>Say hi to electron</button>
       <Button onClick={onClickAddOtp}>추가</Button>
       <Button onClick={onClickClear}>초기화</Button>
-      <p>
-        <Link href='/about'>
-          <a>About</a>
-        </Link>
-      </p>
       <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </Layout>
   );

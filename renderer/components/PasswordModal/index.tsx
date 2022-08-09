@@ -3,8 +3,9 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Input, InputGroup, InputRightElement, VStack, Text,
 } from '@chakra-ui/react';
-import { PasswordStatus } from '../../../electron-src/interfaces';
+import { PasswordStatus, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
+import styles from './index.module.scss';
 
 interface Props {
   isOpen?: boolean,
@@ -18,12 +19,16 @@ const PasswordModal = ({
 
   const [password, setPassword,] = useState('');
   const [isShowPassword, setShowPassword,] = useState(false);
+  const [incorrectPassword, setIncorrectPassword,] = useState(false);
+  const [attemptPassword, setAttemptPassword,] = useState(false);
 
   useEffect(() => {
     const getSettingHandler = (_event, args) => {
       const passwordStatus: PasswordStatus = args as PasswordStatus;
       if (passwordStatus.type === 'VALIDATE') {
         onClose();
+      } else {
+        setIncorrectPassword(true);
       }
     };
 
@@ -44,6 +49,7 @@ const PasswordModal = ({
   };
 
   const onClickSave = () => {
+    setAttemptPassword(true);
     global.ipcRenderer.send('getSetting', {
       password,
     });
@@ -58,20 +64,44 @@ const PasswordModal = ({
           <VStack spacing={2}>
             <InputGroup size='md'>
               <Input
-                pr='4.5rem'
+                paddingRight='4.5rem'
                 type={isShowPassword ? 'text' : 'password'}
                 placeholder='비밀번호'
                 value={password}
+                borderColor={attemptPassword && incorrectPassword ? 'red.200' : 'gray.200'}
+                focusBorderColor={attemptPassword && incorrectPassword ? 'red.200' : 'blue.500'}
                 onChange={onChangePassword}
               />
               <InputRightElement width='4.5rem'>
-                <Button h='1.75rem' size='sm' onClick={onClickShowPassword}>{isShowPassword ? '가리기' : '보이기'}</Button>
+                <Button
+                  height='1.75rem'
+                  size='sm'
+                  onClick={onClickShowPassword}
+                >
+                  {isShowPassword ? '가리기' : '보이기'}
+                </Button>
               </InputRightElement>
             </InputGroup>
           </VStack>
+          <div className={styles.description}>
+            <Text fontSize='small' color='gray.600'>로그인 유지 시간은 12시간 입니다.</Text>
+          </div>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' disabled={password.length === 0} onClick={onClickSave}>저장</Button>
+          <Button
+            marginRight='auto'
+            colorScheme='red'
+            variant='ghost'
+          >
+            비밀번호 초기화
+          </Button>
+          <Button
+            colorScheme='blue'
+            disabled={password.length === 0}
+            onClick={onClickSave}
+          >
+            저장
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

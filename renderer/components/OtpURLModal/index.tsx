@@ -29,7 +29,6 @@ const OtpURLModal = ({
 
   useEffect(() => {
     const handleMessage = (_event, args) => {
-      console.log(args);
       if (args.result) {
         onClose();
       }

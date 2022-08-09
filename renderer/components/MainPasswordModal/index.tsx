@@ -94,8 +94,8 @@ const MainPasswordModal = ({
             </InputGroup>
           </VStack>
           <div className={styles.description}>
-            <Text fontSize='small'>초기 비밀번호는 다시 찾을 수 없습니다.</Text>
-            <Text fontSize='small'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
+            <Text fontSize='small' color='gray.600'>초기 비밀번호는 다시 찾을 수 없습니다.</Text>
+            <Text fontSize='small' color='gray.600'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
           </div>
         </ModalBody>
         <ModalFooter>

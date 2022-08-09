@@ -51,7 +51,7 @@ const Layout = ({
 
   const onClosePasswordModal = () => {
     setOpenPasswordModal(false);
-  }
+  };
 
   return (
     <div>
