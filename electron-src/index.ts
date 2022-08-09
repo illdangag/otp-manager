@@ -67,7 +67,7 @@ ipcMain.on('getSetting', (event: IpcMainEvent, args: any) => {
       passwordStatus.type = 'INVALIDATE';
     }
   }
-  console.log(passwordStatus);
+  console.log(password, passwordStatus);
   event.sender.send('getSetting', passwordStatus);
 });
 

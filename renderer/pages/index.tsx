@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import OtpURLModal from '../components/OtpURLModal';
+import { BrowserStorage, } from '../utils';
 
 const IndexPage = () => {
 
@@ -29,6 +30,7 @@ const IndexPage = () => {
 
   const onClickClear = () => {
     global.ipcRenderer.send('clear', {});
+    BrowserStorage.clear();
   };
 
   const onCloseOtpURLModal = () => {

@@ -4,6 +4,8 @@ import Head from 'next/head';
 
 import MainPasswordModal from './MainPasswordModal';
 import { PasswordStatus, } from '../../electron-src/interfaces';
+import PasswordModal from './PasswordModal';
+import { BrowserStorage, } from '../utils';
 
 type Props = {
   children: ReactNode
@@ -15,21 +17,29 @@ const Layout = ({
   title = 'This is the default title',
 }: Props) => {
 
-  const [password, setPassword,] = useState('');
   const [isOpenMainPasswordModal, setOpenMainPasswordModal,] = useState(false);
+  const [isOpenPasswordModal, setOpenPasswordModal,] = useState(false);
 
   useEffect(() => {
+
     const getSettingHandler = (_event, args) => {
-      const passwordStatus: PasswordStatus = args;
+      const passwordStatus: PasswordStatus = args as PasswordStatus;
       console.log(passwordStatus);
       if (passwordStatus.type === 'NOT_SETTING') {
         setOpenMainPasswordModal(true);
+      } else if (passwordStatus.type === 'INVALIDATE') {
+        setOpenPasswordModal(true);
       }
     };
+
     global.ipcRenderer.addListener('getSetting', getSettingHandler);
+
+    const storagePassword = BrowserStorage.getPassword();
+    console.log(storagePassword);
     global.ipcRenderer.send('getSetting', {
-      password,
+      password: storagePassword,
     });
+
     return () => {
       global.ipcRenderer.removeListener('getSetting', getSettingHandler);
     };
@@ -39,7 +49,11 @@ const Layout = ({
     setOpenMainPasswordModal(false);
   };
 
-  return  (
+  const onClosePasswordModal = () => {
+    setOpenPasswordModal(false);
+  }
+
+  return (
     <div>
       <Head>
         <title>{title}</title>
@@ -50,12 +64,12 @@ const Layout = ({
         <nav>
           <Link href='/'>
             <a>Home</a>
-          </Link>{' '}
-          |{' '}
+          </Link>
+          {' '}|{' '}
           <Link href='/otp/list'>
             <a>OTP list</a>
-          </Link>{' '}
-          |{' '}
+          </Link>
+          {' '}|{' '}
           <Link href='/otp/setting'>
             <a>OTP Setting</a>
           </Link>
@@ -67,6 +81,7 @@ const Layout = ({
         <span>I'm here to stay (Footer)</span>
       </footer>
       <MainPasswordModal isOpen={isOpenMainPasswordModal} onClose={onCloseMainPasswordModal}/>
+      <PasswordModal isOpen={isOpenPasswordModal} onClose={onClosePasswordModal}/>
     </div>
   );
 };

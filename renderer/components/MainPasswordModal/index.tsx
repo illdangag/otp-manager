@@ -4,6 +4,7 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Input, InputGroup, InputRightElement, VStack, Text,
 } from '@chakra-ui/react';
+import { BrowserStorage, } from '../../utils';
 
 interface Props {
   isOpen?: boolean,
@@ -57,10 +58,11 @@ const MainPasswordModal = ({
     global.ipcRenderer.send('setMainPassword', {
       password,
     });
+    BrowserStorage.setPassword(password);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} >
+    <Modal isOpen={isOpen} onClose={() => {}} >
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>초기 비밀번호 설정</ModalHeader>
