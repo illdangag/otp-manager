@@ -1,4 +1,3 @@
-import styles from './index.module.scss';
 import { useEffect, useState, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
@@ -93,10 +92,8 @@ const MainPasswordModal = ({
               </InputRightElement>
             </InputGroup>
           </VStack>
-          <div className={styles.description}>
-            <Text fontSize='small' color='gray.600'>초기 비밀번호는 다시 찾을 수 없습니다.</Text>
-            <Text fontSize='small' color='gray.600'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
-          </div>
+          <Text marginTop='1rem' fontSize='small' color='gray.600'>초기 비밀번호는 다시 찾을 수 없습니다.</Text>
+          <Text fontSize='small' color='gray.600'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme='blue' onClick={onClickSave} disabled={disabledSaveButton}>저장</Button>

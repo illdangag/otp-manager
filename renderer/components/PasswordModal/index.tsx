@@ -5,11 +5,11 @@ import {
 } from '@chakra-ui/react';
 import { PasswordStatus, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
-import styles from './index.module.scss';
+import ResetPasswordModal from '../ResetPasswordModal';
 
 interface Props {
   isOpen?: boolean,
-  onClose?: () => void,
+  onClose?: (isResetPassword: boolean) => void,
 }
 
 const PasswordModal = ({
@@ -21,12 +21,13 @@ const PasswordModal = ({
   const [isShowPassword, setShowPassword,] = useState(false);
   const [incorrectPassword, setIncorrectPassword,] = useState(false);
   const [attemptPassword, setAttemptPassword,] = useState(false);
+  const [isShowResetPasswordModal, setShowResetPasswordModal,] = useState(false);
 
   useEffect(() => {
     const getSettingHandler = (_event, args) => {
       const passwordStatus: PasswordStatus = args as PasswordStatus;
       if (passwordStatus.type === 'VALIDATE') {
-        onClose();
+        onClose(false);
       } else {
         setIncorrectPassword(true);
       }
@@ -55,56 +56,69 @@ const PasswordModal = ({
     });
   };
 
+  const onClickResetPassword = () => {
+    setShowResetPasswordModal(true);
+  };
+
+  const onCloseResetPassword = (isResetPassword: boolean) => {
+    if (isResetPassword) {
+      onClose(true);
+    }
+    setShowResetPasswordModal(false);
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={() => {}}>
-      <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
-      <ModalContent>
-        <ModalHeader>비밀번호 입력</ModalHeader>
-        <ModalBody pb={6}>
-          <VStack spacing={2}>
-            <InputGroup size='md'>
-              <Input
-                paddingRight='4.5rem'
-                type={isShowPassword ? 'text' : 'password'}
-                placeholder='비밀번호'
-                value={password}
-                borderColor={attemptPassword && incorrectPassword ? 'red.200' : 'gray.200'}
-                focusBorderColor={attemptPassword && incorrectPassword ? 'red.200' : 'blue.500'}
-                onChange={onChangePassword}
-              />
-              <InputRightElement width='4.5rem'>
-                <Button
-                  height='1.75rem'
-                  size='sm'
-                  onClick={onClickShowPassword}
-                >
-                  {isShowPassword ? '가리기' : '보이기'}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </VStack>
-          <div className={styles.description}>
-            <Text fontSize='small' color='gray.600'>로그인 유지 시간은 12시간 입니다.</Text>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            marginRight='auto'
-            colorScheme='red'
-            variant='ghost'
-          >
-            비밀번호 초기화
-          </Button>
-          <Button
-            colorScheme='blue'
-            disabled={password.length === 0}
-            onClick={onClickSave}
-          >
-            저장
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <>
+      <Modal isOpen={isOpen && !isShowResetPasswordModal} onClose={() => {}}>
+        <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
+        <ModalContent>
+          <ModalHeader>비밀번호 입력</ModalHeader>
+          <ModalBody pb={6}>
+            <VStack spacing={2}>
+              <InputGroup size='md'>
+                <Input
+                  paddingRight='4.5rem'
+                  type={isShowPassword ? 'text' : 'password'}
+                  placeholder='비밀번호'
+                  value={password}
+                  borderColor={attemptPassword && incorrectPassword ? 'red.200' : 'gray.200'}
+                  focusBorderColor={attemptPassword && incorrectPassword ? 'red.200' : 'blue.500'}
+                  onChange={onChangePassword}
+                />
+                <InputRightElement width='4.5rem'>
+                  <Button
+                    height='1.75rem'
+                    size='sm'
+                    onClick={onClickShowPassword}
+                  >
+                    {isShowPassword ? '가리기' : '보이기'}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </VStack>
+            <Text marginTop='1rem' fontSize='small' color='gray.600'>로그인 유지 시간은 12시간 입니다.</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              marginRight='auto'
+              colorScheme='red'
+              variant='ghost'
+              onClick={onClickResetPassword}
+            >
+              비밀번호 초기화
+            </Button>
+            <Button
+              colorScheme='blue'
+              disabled={password.length === 0}
+              onClick={onClickSave}
+            >
+              저장
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <ResetPasswordModal isOpen={isShowResetPasswordModal} onClose={onCloseResetPassword}/>
+    </>
   );
 };
 

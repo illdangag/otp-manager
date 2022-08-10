@@ -49,9 +49,15 @@ const Layout = ({
     setOpenMainPasswordModal(false);
   };
 
-  const onClosePasswordModal = () => {
+  const onClosePasswordModal = (isResetPassword: boolean) => {
     setOpenPasswordModal(false);
+    if (isResetPassword) {
+      global.ipcRenderer.send('getSetting', {
+        password: '',
+      });
+    }
   };
+
 
   return (
     <div>

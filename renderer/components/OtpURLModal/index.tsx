@@ -153,7 +153,7 @@ const OtpURLModal = ({
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>취소</Button>
+          <Button marginRight={3} onClick={onClose}>취소</Button>
           <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSave}>저장</Button>
         </ModalFooter>
       </ModalContent>
