@@ -6,8 +6,8 @@ import { PasswordStatus, } from '../../electron-src/interfaces';
 import PasswordModal from './PasswordModal';
 import { BrowserStorage, } from '../utils';
 import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer } from '@chakra-ui/react';
-import { AddIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, RepeatIcon } from '@chakra-ui/icons';
-import SignOutIcon from '../icons/SignOutIcon';
+import { HamburgerIcon, } from '@chakra-ui/icons';
+import { SignOutIcon, AddIcon, } from '../icons';
 
 type Props = {
   children: ReactNode
@@ -80,17 +80,11 @@ const Layout = ({
               variant='outline'
             />
             <MenuList>
-              <MenuItem icon={<AddIcon />} onClick={onClickAdd}>
-                Add OTP
+              <MenuItem icon={<AddIcon/>} onClick={onClickAdd}>
+                OTP 추가
               </MenuItem>
-              <MenuItem icon={<SignOutIcon boxSize='1.2rem' color='red.300'/>} command='⌘N'>
-                New Window
-              </MenuItem>
-              <MenuItem icon={<RepeatIcon />} command='⌘⇧N'>
-                Open Closed Tab
-              </MenuItem>
-              <MenuItem icon={<EditIcon />} command='⌘O'>
-                Open File...
+              <MenuItem icon={<SignOutIcon/>}>
+                로그아웃
               </MenuItem>
             </MenuList>
           </Menu>
