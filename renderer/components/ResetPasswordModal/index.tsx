@@ -1,8 +1,5 @@
-import {
-  Button, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter,
-  ModalHeader, ModalOverlay, Text, VStack
-} from '@chakra-ui/react';
-import { BrowserStorage } from '../../utils';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, } from '@chakra-ui/react';
+import { BrowserStorage, } from '../../utils';
 
 interface Props {
   isOpen?: boolean,

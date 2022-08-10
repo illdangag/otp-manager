@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, } from 'react';
 import { Otp, } from '../../../electron-src/interfaces';
-import { BrowserStorage } from '../../utils';
+import { BrowserStorage, } from '../../utils';
 
 interface Props {
   isOpen?: boolean,

@@ -1,9 +1,10 @@
 import { useEffect, useState, } from 'react';
-import { Button, } from '@chakra-ui/react';
+import { Button, Container, HStack, VStack, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import OtpURLModal from '../components/OtpURLModal';
 import { BrowserStorage, } from '../utils';
-import { Otp } from '../../electron-src/interfaces';
+import { Otp, } from '../../electron-src/interfaces';
+import OtpItem from '../components/OtpItem';
 
 const IndexPage = () => {
 
@@ -21,10 +22,6 @@ const IndexPage = () => {
       global.ipcRenderer.removeListener('getOtps', getOtpsHandler);
     };
   }, []);
-
-  const onSayHiClick = () => {
-    global.ipcRenderer.send('message', 'hi from next');
-  };
 
   const onClickAddOtp = () => {
     setIsOpenOtpModal(true);
@@ -47,11 +44,22 @@ const IndexPage = () => {
 
   return (
     <Layout title='Home | Next.js + TypeScript + Electron Example'>
-      <h1>Hello Next.js 👋</h1>
-      <button onClick={onSayHiClick}>Say hi to electron</button>
-      <Button onClick={onClickAddOtp}>추가</Button>
-      <Button onClick={onClickClear}>초기화</Button>
-      <Button onClick={onClickGetOtpList}>조회</Button>
+      <HStack>
+        <Button onClick={onClickAddOtp}>추가</Button>
+        <Button onClick={onClickClear}>초기화</Button>
+        <Button onClick={onClickGetOtpList}>조회</Button>
+      </HStack>
+      <VStack
+        // divider={<StackDivider borderColor='gray.200' />}
+        // spacing={4}
+        // align='stretch'
+      >
+        {otpList.map((item, index) => (
+          <Container key={index}>
+            <OtpItem otp={item}/>
+          </Container>
+        ))}
+      </VStack>
       <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </Layout>
   );

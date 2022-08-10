@@ -92,11 +92,11 @@ ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
   const otpsData = store.get('otps');
   const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
   otps.push(otp);
-  console.log(otps);
   store.set('otps', otps);
   event.sender.send('setOtp', {
     result: true,
   });
+  console.log(otps);
 });
 
 ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
@@ -120,7 +120,7 @@ ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
 });
 
 const uuidv4 = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });

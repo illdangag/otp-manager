@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect, useState, } from 'react';
-import Link from 'next/link';
 import Head from 'next/head';
 
 import MainPasswordModal from './MainPasswordModal';
@@ -65,23 +64,10 @@ const Layout = ({
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <header>
-        <nav>
-          <Link href='/'>
-            <a>Home</a>
-          </Link>
-          {' '}|{' '}
-          <Link href='/otp/list'>
-            <a>OTP list</a>
-          </Link>
-          {' '}|{' '}
-          <Link href='/otp/setting'>
-            <a>OTP Setting</a>
-          </Link>
-        </nav>
       </header>
       {children}
       <footer>
-        <hr />
+        <hr/>
         <span>I'm here to stay (Footer)</span>
       </footer>
       <MainPasswordModal isOpen={isOpenMainPasswordModal} onClose={onCloseMainPasswordModal}/>

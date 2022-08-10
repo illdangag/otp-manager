@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 const algorithm = 'aes-256-cbc';
-const IV = Buffer.from("5183666c72eec9e45183666c72eec9e4", "hex"); // set random initialisation vector
+const IV = Buffer.from('5183666c72eec9e45183666c72eec9e4', 'hex');
 
 function encrypt (text: string, _secret: string): string {
   const hash = crypto.createHash('sha256').update(_secret).digest('hex');

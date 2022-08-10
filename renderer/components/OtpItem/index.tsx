@@ -1,27 +1,31 @@
 import { useEffect, useState, } from 'react';
-import { Box, CircularProgress, Heading, Text, Grid, GridItem, Button, Center, } from '@chakra-ui/react';
+import { Box, CircularProgress, Text, Button, HStack, } from '@chakra-ui/react';
 import Timeout = NodeJS.Timeout;
+import { Otp, } from '../../../electron-src/interfaces';
+import totp from 'totp-generator';
 
 interface Props {
-  title?: string,
-  description?: string,
-  otpCode?: string,
+  otp: Otp,
 }
 
 const OtpItem = ({
-  title = '{TITLE}',
-  description = '{DESC}',
-  otpCode = '000000',
+  otp,
 }: Props) => {
-  const [optTimeValue, setOtpTimeValue,] = useState(0);
+  const [otpTimeValue, setOtpTimeValue,] = useState<number>(0);
+  const [otpCode, setOtpCode,] = useState<string>('------');
 
   useEffect(() => {
+    const intervalTime: number = 500;
     const intervalId: Timeout = setInterval(() => {
       const now: Date = new Date();
       const time: number = now.getSeconds() * 1000 + now.getMilliseconds();
-      const otpTimeValue: number = (time % 30000) / 30000 * 100;
-      setOtpTimeValue(otpTimeValue);
-    }, 100);
+      const newOtpTimeValue: number = (time % 30000) / 30000 * 100;
+      setOtpTimeValue(newOtpTimeValue);
+      if ((time % ( 30 * 1000)) <= intervalTime) {
+        setOtpCode(totp(otp.secret));
+      }
+    }, intervalTime);
+    setOtpCode(totp(otp.secret));
     return () => {
       clearInterval(intervalId);
     };
@@ -33,23 +37,14 @@ const OtpItem = ({
 
   return (
     <Box p={5} shadow='md' borderWidth='1px'>
-      <Heading fontSize='medium'>{title}</Heading>
-      <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(5, 1fr)'>
-        <GridItem colSpan={5} bg='tomato'>
-          <Text>{description}</Text>
-        </GridItem>
-        <GridItem colSpan={2}>
-          <Center>
-            <Text fontSize='xx-large'>{otpCode}</Text>
-          </Center>
-        </GridItem>
-        <GridItem colSpan={2}>
-          <CircularProgress value={optTimeValue} color='green.300'/>
-        </GridItem>
-        <GridItem colSpan={1}>
-          <Button size='lg' onClick={onClickCopy}>COPY</Button>
-        </GridItem>
-      </Grid>
+      <HStack>
+        <Text fontSize='md'>{`${otp.issuer} (${otp.user})`}</Text>
+      </HStack>
+      <HStack>
+        <Text marginLeft='auto' marginRight='auto' fontSize='xx-large'>{otpCode}</Text>
+        <CircularProgress value={otpTimeValue} color={otpTimeValue < 80 ? 'green.300' : 'red.300'}/>
+        <Button size='sm' onClick={onClickCopy}>OTP 복사</Button>
+      </HStack>
     </Box>
   );
 };
