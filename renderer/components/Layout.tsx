@@ -5,6 +5,9 @@ import MainPasswordModal from './MainPasswordModal';
 import { PasswordStatus, } from '../../electron-src/interfaces';
 import PasswordModal from './PasswordModal';
 import { BrowserStorage, } from '../utils';
+import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer } from '@chakra-ui/react';
+import { AddIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, RepeatIcon } from '@chakra-ui/icons';
+import SignOutIcon from '../icons/SignOutIcon';
 
 type Props = {
   children: ReactNode
@@ -55,6 +58,9 @@ const Layout = ({
     }
   };
 
+  const onClickAdd = () => {
+    console.log('add');
+  }
 
   return (
     <div>
@@ -64,6 +70,31 @@ const Layout = ({
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <header>
+        <HStack padding='.4rem'>
+          <Spacer/>
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              aria-label='Options'
+              icon={<HamburgerIcon />}
+              variant='outline'
+            />
+            <MenuList>
+              <MenuItem icon={<AddIcon />} onClick={onClickAdd}>
+                Add OTP
+              </MenuItem>
+              <MenuItem icon={<SignOutIcon boxSize='1.2rem' color='red.300'/>} command='⌘N'>
+                New Window
+              </MenuItem>
+              <MenuItem icon={<RepeatIcon />} command='⌘⇧N'>
+                Open Closed Tab
+              </MenuItem>
+              <MenuItem icon={<EditIcon />} command='⌘O'>
+                Open File...
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
       </header>
       {children}
       <footer>
