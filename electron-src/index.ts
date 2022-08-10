@@ -46,11 +46,6 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-ipcMain.on('message', (event: IpcMainEvent, message: any) => {
-  console.log(message);
-  setTimeout(() => event.sender.send('message', 'hi from electron'), 500);
-});
-
 ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
   console.log('clear');
   store.clear();
@@ -112,10 +107,14 @@ ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
     event.sender.send('getOtps', []);
   } else {
     const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
-    for (let opt of otps) {
-      opt.secret = decrypt(opt.secret, password);
+    try {
+      for (let opt of otps) {
+        opt.secret = decrypt(opt.secret, password);
+      }
+    } catch {
+      event.sender.send('getOtps', []);
+      return;
     }
-    console.log(otps);
     event.sender.send('getOtps', otps);
   }
 });

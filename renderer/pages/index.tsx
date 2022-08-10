@@ -1,22 +1,24 @@
 import { useEffect, useState, } from 'react';
-import Link from 'next/link';
 import { Button, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import OtpURLModal from '../components/OtpURLModal';
 import { BrowserStorage, } from '../utils';
+import { Otp } from '../../electron-src/interfaces';
 
 const IndexPage = () => {
 
-  const [isOpenOtpURLModal, setIsOpenOtpModal,] = useState(false);
+  const [isOpenOtpURLModal, setIsOpenOtpModal,] = useState<boolean>(false);
+  const [otpList, setOtpList,] = useState<Otp[]>([]);
 
   useEffect(() => {
-    const handleMessage = (_event, args) => alert(args);
-
-    // add a listener to 'message' channel
-    global.ipcRenderer.addListener('message', handleMessage);
+    const getOtpsHandler = (_event, args) => {
+      console.log(args);
+      setOtpList(args as Otp[]);
+    };
+    global.ipcRenderer.addListener('getOtps', getOtpsHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('message', handleMessage);
+      global.ipcRenderer.removeListener('getOtps', getOtpsHandler);
     };
   }, []);
 

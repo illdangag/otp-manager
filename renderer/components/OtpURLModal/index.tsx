@@ -29,16 +29,18 @@ const OtpURLModal = ({
   const [disabledSaveButton, setDisabledSaveButton,] = useState(true);
 
   useEffect(() => {
-    const handleMessage = (_event, args) => {
+    const setOtpHandler = (_event, args) => {
       if (args.result) {
+        global.ipcRenderer.send('getOtps', {
+          password: BrowserStorage.getPassword(),
+        });
         onClose();
       }
     };
-
-    global.ipcRenderer.addListener('setOtp', handleMessage);
+    global.ipcRenderer.addListener('setOtp', setOtpHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('setOtp', handleMessage);
+      global.ipcRenderer.removeListener('setOtp', setOtpHandler);
     };
   }, []);
 

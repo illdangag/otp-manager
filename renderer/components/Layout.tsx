@@ -21,23 +21,21 @@ const Layout = ({
   const [isOpenPasswordModal, setOpenPasswordModal,] = useState(false);
 
   useEffect(() => {
-
     const getSettingHandler = (_event, args) => {
       const passwordStatus: PasswordStatus = args as PasswordStatus;
-      console.log(passwordStatus);
       if (passwordStatus.type === 'NOT_SETTING') {
         setOpenMainPasswordModal(true);
       } else if (passwordStatus.type === 'INVALIDATE') {
         setOpenPasswordModal(true);
       }
+      global.ipcRenderer.send('getOtps', {
+        password: BrowserStorage.getPassword(),
+      });
     };
-
     global.ipcRenderer.addListener('getSetting', getSettingHandler);
 
-    const storagePassword = BrowserStorage.getPassword();
-    console.log(storagePassword);
     global.ipcRenderer.send('getSetting', {
-      password: storagePassword,
+      password: BrowserStorage.getPassword(),
     });
 
     return () => {
