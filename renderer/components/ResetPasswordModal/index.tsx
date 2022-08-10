@@ -23,7 +23,7 @@ const ResetPasswordModal = ({
         bg='none'
         backdropFilter='auto'
         backdropInvert='80%'
-        backdropBlur='2px'
+        // backdropBlur='2px'
       />
       <ModalContent>
         <ModalHeader>비밀번호 초기화</ModalHeader>

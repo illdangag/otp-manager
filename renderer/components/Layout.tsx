@@ -8,6 +8,7 @@ import { BrowserStorage, } from '../utils';
 import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { SignOutIcon, AddIcon, } from '../icons';
+import OtpURLModal from './OtpURLModal';
 
 type Props = {
   children: ReactNode
@@ -21,6 +22,7 @@ const Layout = ({
 
   const [isOpenMainPasswordModal, setOpenMainPasswordModal,] = useState(false);
   const [isOpenPasswordModal, setOpenPasswordModal,] = useState(false);
+  const [isOpenOtpURLModal, setIsOpenOtpModal,] = useState<boolean>(false);
 
   useEffect(() => {
     const getSettingHandler = (_event, args) => {
@@ -59,8 +61,19 @@ const Layout = ({
   };
 
   const onClickAdd = () => {
-    console.log('add');
-  }
+    setIsOpenOtpModal(true);
+  };
+
+  const onCloseOtpURLModal = () => {
+    setIsOpenOtpModal(false);
+  };
+
+  const onClickSignOut = () => {
+    BrowserStorage.clear();
+    global.ipcRenderer.send('getSetting', {
+      password: '',
+    });
+  };
 
   return (
     <div>
@@ -83,7 +96,7 @@ const Layout = ({
               <MenuItem icon={<AddIcon/>} onClick={onClickAdd}>
                 OTP 추가
               </MenuItem>
-              <MenuItem icon={<SignOutIcon/>}>
+              <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOut}>
                 로그아웃
               </MenuItem>
             </MenuList>
@@ -92,11 +105,10 @@ const Layout = ({
       </header>
       {children}
       <footer>
-        <hr/>
-        <span>I'm here to stay (Footer)</span>
       </footer>
       <MainPasswordModal isOpen={isOpenMainPasswordModal} onClose={onCloseMainPasswordModal}/>
       <PasswordModal isOpen={isOpenPasswordModal} onClose={onClosePasswordModal}/>
+      <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </div>
   );
 };

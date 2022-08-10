@@ -28,6 +28,7 @@ const PasswordModal = ({
       const passwordStatus: PasswordStatus = args as PasswordStatus;
       if (passwordStatus.type === 'VALIDATE') {
         onClose(false);
+        clear();
       } else {
         setIncorrectPassword(true);
       }
@@ -63,13 +64,22 @@ const PasswordModal = ({
   const onCloseResetPassword = (isResetPassword: boolean) => {
     if (isResetPassword) {
       onClose(true);
+      clear();
     }
+    setShowResetPasswordModal(false);
+  };
+
+  const clear = () => {
+    setPassword('');
+    setShowPassword(false);
+    setIncorrectPassword(false);
+    setAttemptPassword(false);
     setShowResetPasswordModal(false);
   };
 
   return (
     <>
-      <Modal isOpen={isOpen && !isShowResetPasswordModal} onClose={() => {}}>
+      <Modal isOpen={isOpen} onClose={() => {}}>
         <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
         <ModalContent>
           <ModalHeader>비밀번호 입력</ModalHeader>
