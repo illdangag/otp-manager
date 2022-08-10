@@ -1,4 +1,5 @@
 export type Otp = {
+  id?: string
   user: string
   secret: string
   issuer: string

@@ -51,6 +51,11 @@ ipcMain.on('message', (event: IpcMainEvent, message: any) => {
   setTimeout(() => event.sender.send('message', 'hi from electron'), 500);
 });
 
+ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
+  console.log('clear');
+  store.clear();
+});
+
 ipcMain.on('getSetting', (event: IpcMainEvent, args: any) => {
   const password: string = args.password;
   const encryptedPassword: string | undefined = store.get('encryptedPassword') as string;
@@ -67,6 +72,7 @@ ipcMain.on('getSetting', (event: IpcMainEvent, args: any) => {
       passwordStatus.type = 'INVALIDATE';
     }
   }
+
   console.log(password, passwordStatus);
   event.sender.send('getSetting', passwordStatus);
 });
@@ -82,9 +88,14 @@ ipcMain.on('setMainPassword', (event: IpcMainEvent, args: any) => {
 });
 
 ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
+  const otp: Otp = args.otp;
+  const password: string = args.password;
+
+  otp.id = uuidv4();
+  otp.secret = encrypt(otp.secret, password);
+
   const otpsData = store.get('otps');
   const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
-  const otp: Otp = args as Otp;
   otps.push(otp);
   console.log(otps);
   store.set('otps', otps);
@@ -93,7 +104,25 @@ ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
   });
 });
 
-ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
-  console.log('clear');
-  store.clear();
+ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
+  const password: string = args.password;
+  const otpsData = store.get('otps');
+  console.log(otpsData);
+  if (otpsData == null) {
+    event.sender.send('getOtps', []);
+  } else {
+    const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
+    for (let opt of otps) {
+      opt.secret = decrypt(opt.secret, password);
+    }
+    console.log(otps);
+    event.sender.send('getOtps', otps);
+  }
 });
+
+const uuidv4 = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};

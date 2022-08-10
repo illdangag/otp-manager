@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, } from 'react';
 import { Otp, } from '../../../electron-src/interfaces';
+import { BrowserStorage } from '../../utils';
 
 interface Props {
   isOpen?: boolean,
@@ -124,7 +125,10 @@ const OtpURLModal = ({
       secret,
       issuer,
     };
-    global.ipcRenderer.send('setOtp', otp);
+    global.ipcRenderer.send('setOtp', {
+      otp: otp,
+      password: BrowserStorage.getPassword(),
+    });
   };
 
   return (

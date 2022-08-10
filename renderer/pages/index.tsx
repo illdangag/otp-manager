@@ -37,12 +37,19 @@ const IndexPage = () => {
     setIsOpenOtpModal(false);
   };
 
+  const onClickGetOtpList = () => {
+    global.ipcRenderer.send('getOtps', {
+      password: BrowserStorage.getPassword(),
+    });
+  };
+
   return (
     <Layout title='Home | Next.js + TypeScript + Electron Example'>
       <h1>Hello Next.js 👋</h1>
       <button onClick={onSayHiClick}>Say hi to electron</button>
       <Button onClick={onClickAddOtp}>추가</Button>
       <Button onClick={onClickClear}>초기화</Button>
+      <Button onClick={onClickGetOtpList}>조회</Button>
       <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </Layout>
   );
