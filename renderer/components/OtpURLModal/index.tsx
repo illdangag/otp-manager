@@ -1,4 +1,3 @@
-import styles from './index.module.scss';
 import { useEffect, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
@@ -35,6 +34,7 @@ const OtpURLModal = ({
           password: BrowserStorage.getPassword(),
         });
         onClose();
+        clear();
       }
     };
     global.ipcRenderer.addListener('setOtp', setOtpHandler);
@@ -92,17 +92,6 @@ const OtpURLModal = ({
     setDisabledSaveButton(false);
   };
 
-  const clear = () => {
-    setUser('');
-    setSecret('');
-    setIssuer('');
-    setDisabledEditIssuer(true);
-    setDisabledEditUser(true);
-    setDisabledEditIssuerButton(true);
-    setDisabledEditUserButton(true);
-    setDisabledSaveButton(true);
-  };
-
   const onChangeUser = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = event.target.value;
     setUser(value);
@@ -133,6 +122,23 @@ const OtpURLModal = ({
     });
   };
 
+  const onClickCancel = () => {
+    onClose();
+    clear();
+  };
+
+  function clear () {
+    setUrl('');
+    setUser('');
+    setSecret('');
+    setIssuer('');
+    setDisabledEditIssuer(true);
+    setDisabledEditUser(true);
+    setDisabledEditIssuerButton(true);
+    setDisabledEditUserButton(true);
+    setDisabledSaveButton(true);
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} >
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
@@ -141,25 +147,23 @@ const OtpURLModal = ({
         <ModalBody pb={6}>
           <Text>OTP URL</Text>
           <Input placeholder='OPT URL' value={url} onChange={onChangeUrl}/>
-          <div className={styles.edit}>
-            <Text>Issuer</Text>
-            <InputGroup size='md'>
-              <Input paddingRight='4.5rem' placeholder='Issuer' value={issuer} disabled={disabledEditIssuer} onChange={onChangeIssuer}/>
-              <InputRightElement width='4.5rem'>
-                <Button height='1.75rem' disabled={disabledEditIssuerButton} onClick={onClickEditIssuer}>수정</Button>
-              </InputRightElement>
-            </InputGroup>
-            <Text>User</Text>
-            <InputGroup>
-              <Input paddingRight='4.5rem' placeholder='Host' value={user} disabled={disabledEditUser} onChange={onChangeUser}/>
-              <InputRightElement width='4.5rem'>
-                <Button height='1.75rem' disabled={disabledEditUserButton} onClick={onClickEditUser}>수정</Button>
-              </InputRightElement>
-            </InputGroup>
-          </div>
+          <Text marginTop='1rem'>Issuer</Text>
+          <InputGroup size='md'>
+            <Input paddingRight='4.5rem' placeholder='Issuer' value={issuer} disabled={disabledEditIssuer} onChange={onChangeIssuer}/>
+            <InputRightElement width='4.5rem'>
+              <Button height='1.75rem' disabled={disabledEditIssuerButton} onClick={onClickEditIssuer}>수정</Button>
+            </InputRightElement>
+          </InputGroup>
+          <Text>User</Text>
+          <InputGroup>
+            <Input paddingRight='4.5rem' placeholder='Host' value={user} disabled={disabledEditUser} onChange={onChangeUser}/>
+            <InputRightElement width='4.5rem'>
+              <Button height='1.75rem' disabled={disabledEditUserButton} onClick={onClickEditUser}>수정</Button>
+            </InputRightElement>
+          </InputGroup>
         </ModalBody>
         <ModalFooter>
-          <Button marginRight={3} onClick={onClose}>취소</Button>
+          <Button marginRight={3} onClick={onClickCancel}>취소</Button>
           <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSave}>저장</Button>
         </ModalFooter>
       </ModalContent>

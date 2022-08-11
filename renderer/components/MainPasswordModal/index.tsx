@@ -25,9 +25,11 @@ const MainPasswordModal = ({
     const setMainPasswordHandler = (_event, args) => {
       if (args.result) {
         onClose();
+        clear();
       }
     };
     global.ipcRenderer.addListener('setMainPassword', setMainPasswordHandler);
+
     return () => {
       global.ipcRenderer.removeListener('setMainPassword', setMainPasswordHandler);
     };
@@ -59,6 +61,14 @@ const MainPasswordModal = ({
     });
     BrowserStorage.setPassword(password);
   };
+
+  function clear() {
+    setShowPassword(false);
+    setShowValidate(false);
+    setPassword('');
+    setValidate('')
+    setDisabledSaveButton(true);
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} >

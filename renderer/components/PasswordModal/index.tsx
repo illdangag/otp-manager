@@ -1,7 +1,7 @@
 import { useEffect, useState, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, InputGroup, InputRightElement, VStack, Text,
+  Button, Input, InputGroup, InputRightElement, VStack, Text, useToast,
 } from '@chakra-ui/react';
 import { PasswordStatus, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
@@ -23,11 +23,14 @@ const PasswordModal = ({
   const [attemptPassword, setAttemptPassword,] = useState(false);
   const [isShowResetPasswordModal, setShowResetPasswordModal,] = useState(false);
 
+  const toast = useToast()
+
   useEffect(() => {
     const getSettingHandler = (_event, args) => {
       const passwordStatus: PasswordStatus = args as PasswordStatus;
       if (passwordStatus.type === 'VALIDATE') {
         onClose(false);
+        showSuccessToast();
         clear();
       } else {
         setIncorrectPassword(true);
@@ -69,13 +72,22 @@ const PasswordModal = ({
     setShowResetPasswordModal(false);
   };
 
-  const clear = () => {
+  function showSuccessToast () {
+    toast({
+      title: '로그인 성공',
+      status: 'success',
+      duration: 2500,
+      position: 'top',
+    });
+  }
+
+  function clear () {
     setPassword('');
     setShowPassword(false);
     setIncorrectPassword(false);
     setAttemptPassword(false);
     setShowResetPasswordModal(false);
-  };
+  }
 
   return (
     <>
