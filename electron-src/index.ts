@@ -8,7 +8,7 @@ import { app, BrowserWindow, ipcMain, IpcMainEvent, } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 
-import { Otp, PasswordStatus, } from '../electron-src/interfaces';
+import { Otp, PasswordStatus, PasswordStatusType, } from '../electron-src/interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 
 const store = new Store();
@@ -42,7 +42,6 @@ app.on('ready', async () => {
 
 // Quit the app once all windows are closed
 app.on('window-all-closed', () => {
-  store.delete('mainPassword');
   app.quit();
 });
 
@@ -53,22 +52,9 @@ ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
 
 ipcMain.on('getSetting', (event: IpcMainEvent, args: any) => {
   const password: string = args.password;
-  const encryptedPassword: string | undefined = store.get('encryptedPassword') as string;
-
   const passwordStatus: PasswordStatus = {
-    type: 'NOT_SETTING',
+    type: validatePassword(password),
   };
-
-  if (encryptedPassword !== undefined) {
-    try {
-      const decryptedPassword: string = decrypt(encryptedPassword, password);
-      passwordStatus.type = decryptedPassword === PASSWORD_VALIDATE ? 'VALIDATE' : 'INVALIDATE';
-    } catch {
-      passwordStatus.type = 'INVALIDATE';
-    }
-  }
-
-  console.log(password, passwordStatus);
   event.sender.send('getSetting', passwordStatus);
 });
 
@@ -89,36 +75,102 @@ ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
   otp.id = uuidv4();
   otp.secret = encrypt(otp.secret, password);
 
-  const otpsData = store.get('otps');
-  const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
-  otps.push(otp);
-  store.set('otps', otps);
+  const otpListData = store.get('otpList');
+  const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
+  otpList.push(otp);
+  store.set('otpList', otpList);
   event.sender.send('setOtp', {
     result: true,
   });
-  console.log(otps);
 });
 
 ipcMain.on('getOtpList', (event: IpcMainEvent, args: any) => {
   const password: string = args.password;
-  const otpsData = store.get('otps');
-  console.log(otpsData);
-  if (otpsData == null) {
-    event.sender.send('getOtpList', []);
-  } else {
-    const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
-    try {
-      for (let opt of otps) {
-        opt.secret = decrypt(opt.secret, password);
-      }
-    } catch {
-      event.sender.send('getOtpList', []);
-      return;
-    }
-    event.sender.send('getOtpList', otps);
-  }
+  event.sender.send('getOtpList', getOtpList(password));
 });
 
+ipcMain.on('getOtp', (event: IpcMainEvent, args: any) => {
+  const password: string = args.password;
+  const otpId: string = args.id;
+
+  const passwordStatusType: PasswordStatusType = validatePassword(password);
+  if (passwordStatusType !== 'VALIDATE') {
+    event.sender.send('getSetting', passwordStatusType);
+    return;
+  }
+
+  event.sender.send('getOtp', {
+    otp: getOtp(password, otpId),
+  });
+});
+
+ipcMain.on('updateOtp', (event: IpcMainEvent, args: any) => {
+  const password: string = args.password;
+  const passwordStatusType: PasswordStatusType = validatePassword(password);
+  if (passwordStatusType !== 'VALIDATE') {
+    event.sender.send('getSetting', passwordStatusType);
+    return;
+  }
+
+  const newOtp: Otp = args.otp as Otp;
+  const otpList: Otp[] = getOtpList(password, false);
+  const index: number = otpList.findIndex(item => item.id === newOtp.id!);
+  otpList[index].issuerDescription = newOtp.issuerDescription;
+  otpList[index].userDescription = newOtp.userDescription;
+  store.set('otpList', otpList);
+  event.sender.send('updateOtp', {
+    error: null,
+  });
+});
+
+/////////////////////////////////
+
+const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
+  const otpListData = store.get('otpList');
+  if (otpListData == null) {
+    return [];
+  } else {
+    const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
+    console.log(otpList);
+    try {
+      for (let opt of otpList) {
+        if (isDecrypt) {
+          opt.secret = decrypt(opt.secret, password);
+        }
+      }
+    } catch {
+      return [];
+    }
+    return otpList;
+  }
+}
+
+const getOtp = (password: string, id: string): Otp | null => {
+  const otpList: Otp[] = getOtpList(password);
+  const index: number = otpList.findIndex(item => item.id === id);
+  if (index < 0) {
+    return null;
+  } else {
+    return otpList[index];
+  }
+}
+
+const validatePassword = (password: string): PasswordStatusType => {
+  const encryptedPassword: string | undefined = store.get('encryptedPassword') as string;
+  let passwordStatusType: PasswordStatusType = 'NOT_SETTING';
+  if (encryptedPassword !== undefined) {
+    try {
+      const decryptedPassword: string = decrypt(encryptedPassword, password);
+      return decryptedPassword === PASSWORD_VALIDATE ? 'VALIDATE' : 'INVALIDATE';
+    } catch {
+      return 'INVALIDATE';
+    }
+  }
+  console.log('validatePassword', passwordStatusType);
+  return passwordStatusType;
+};
+
+// TODO utils로 이동
 const uuidv4 = (): string => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

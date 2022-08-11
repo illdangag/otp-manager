@@ -32,7 +32,7 @@ const ResetPasswordModal = ({
           <Text marginTop='1rem' fontSize='medium' color='gray.600'>그래도 초기화 하시겠습니까?</Text>
         </ModalBody>
         <ModalFooter>
-          <Button marginRight={3} onClick={() => onClose(false)}>취소</Button>
+          <Button marginRight='1rem' onClick={() => onClose(false)}>취소</Button>
           <Button colorScheme='red' onClick={onClickReset}>초기화</Button>
         </ModalFooter>
       </ModalContent>

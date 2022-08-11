@@ -18,13 +18,15 @@ const OtpURLModal = ({
 }: Props) => {
 
   const [url, setUrl,] = useState<string>('');
+  const [issuer, setIssuer,] = useState<string>('');
   const [user, setUser,] = useState<string>('');
   const [secret, setSecret,] = useState<string>('');
-  const [issuer, setIssuer,] = useState<string>('');
+
+  const [issuerDescription, setIssuerDescription,] = useState<string>('');
+  const [userDescription, setUserDescription,] = useState<string>('');
+
   const [disabledEditIssuer, setDisabledEditIssuer,] = useState<boolean>(true);
   const [disabledEditUser, setDisabledEditUser,] = useState<boolean>(true);
-  const [disabledEditIssuerButton, setDisabledEditIssuerButton,] = useState<boolean>(true);
-  const [disabledEditUserButton, setDisabledEditUserButton,] = useState<boolean>(true);
   const [disabledSaveButton, setDisabledSaveButton,] = useState<boolean>(true);
 
   const toast = useToast();
@@ -87,36 +89,28 @@ const OtpURLModal = ({
     setUser(user);
     setSecret(secret);
     setIssuer(issuer);
-    setDisabledEditIssuer(true);
-    setDisabledEditUser(true);
-    setDisabledEditIssuerButton(false);
-    setDisabledEditUserButton(false);
+    setDisabledEditIssuer(false);
+    setDisabledEditUser(false);
     setDisabledSaveButton(false);
   };
 
-  const onChangeUser = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeUserDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = event.target.value;
-    setUser(value);
+    setUserDescription(value);
   };
 
-  const onChangeIssuer = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeIssuerDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = event.target.value;
-    setIssuer(value);
-  };
-
-  const onClickEditIssuer = () => {
-    setDisabledEditIssuer(false);
-  };
-
-  const onClickEditUser = () => {
-    setDisabledEditUser(false);
+    setIssuerDescription(value);
   };
 
   const onClickSave = () => {
     const otp: Otp = {
+      issuer,
       user,
       secret,
-      issuer,
+      issuerDescription,
+      userDescription,
     };
     global.ipcRenderer.send('setOtp', {
       otp: otp,
@@ -137,8 +131,6 @@ const OtpURLModal = ({
     setIssuer('');
     setDisabledEditIssuer(true);
     setDisabledEditUser(true);
-    setDisabledEditIssuerButton(true);
-    setDisabledEditUserButton(true);
     setDisabledSaveButton(true);
   }
 
@@ -157,21 +149,27 @@ const OtpURLModal = ({
         <ModalHeader>OTP 추가</ModalHeader>
         <ModalBody pb={6}>
           <Text>OTP URL</Text>
-          <Input placeholder='OPT URL' value={url} onChange={onChangeUrl}/>
+          <Input
+            placeholder='OPT URL'
+            value={url}
+            onChange={onChangeUrl}
+          />
           <Text marginTop='1rem'>Issuer</Text>
-          <InputGroup size='md'>
-            <Input paddingRight='4.5rem' placeholder='Issuer' value={issuer} disabled={disabledEditIssuer} onChange={onChangeIssuer}/>
-            <InputRightElement width='4.5rem'>
-              <Button height='1.75rem' disabled={disabledEditIssuerButton} onClick={onClickEditIssuer}>수정</Button>
-            </InputRightElement>
-          </InputGroup>
-          <Text>User</Text>
-          <InputGroup>
-            <Input paddingRight='4.5rem' placeholder='Host' value={user} disabled={disabledEditUser} onChange={onChangeUser}/>
-            <InputRightElement width='4.5rem'>
-              <Button height='1.75rem' disabled={disabledEditUserButton} onClick={onClickEditUser}>수정</Button>
-            </InputRightElement>
-          </InputGroup>
+          <Input
+            marginTop='0.2rem'
+            placeholder={issuer}
+            value={issuerDescription}
+            disabled={disabledEditIssuer}
+            onChange={onChangeIssuerDescription}
+          />
+          <Text marginTop='0.4rem'>User</Text>
+          <Input
+            marginTop='0.2rem'
+            placeholder={user}
+            value={userDescription}
+            disabled={disabledEditUser}
+            onChange={onChangeUserDescription}
+          />
         </ModalBody>
         <ModalFooter>
           <Button marginRight={3} onClick={onClickCancel}>취소</Button>

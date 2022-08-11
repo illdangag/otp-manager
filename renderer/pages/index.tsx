@@ -10,7 +10,7 @@ const IndexPage = () => {
 
   const [otpList, setOtpList,] = useState<Otp[]>([]);
   const [otpCodeList, setOtpCodeList,] = useState<OtpCode[]>([]);
-  const intervalTime: number = 100;
+  const intervalTime: number = 500;
 
   useEffect(() => {
     const getOtpListHandler = (_event, args) => {
@@ -26,7 +26,7 @@ const IndexPage = () => {
   useInterval(() => {
     const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
     setOtpCodeList(newOtpCodeList);
-  }, intervalTime);
+  }, intervalTime);;
 
   function getOTPCode (otp: Otp, otpCodeList: OtpCode[]): OtpCode {
     const now: Date = new Date();
@@ -48,6 +48,8 @@ const IndexPage = () => {
       id: otp.id,
       issuer: otp.issuer,
       user: otp.user,
+      issuerDescription: otp.issuerDescription,
+      userDescription: otp.userDescription,
       code: code,
       progress: (time % 30000) / 30000 * 100,
     };

@@ -3,12 +3,16 @@ export type Otp = {
   user: string
   issuer: string
   secret: string
+  userDescription: string
+  issuerDescription: string
 }
 
 export type OtpCode = {
   id?: string
   user: string
   issuer: string
+  userDescription: string
+  issuerDescription: string
   code: string
   progress: number
 }
