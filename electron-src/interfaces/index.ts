@@ -1,8 +1,16 @@
 export type Otp = {
   id?: string
   user: string
-  secret: string
   issuer: string
+  secret: string
+}
+
+export type OtpCode = {
+  id?: string
+  user: string
+  issuer: string
+  code: string
+  progress: number
 }
 
 const PasswordStatusType = {

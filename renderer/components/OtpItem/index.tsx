@@ -1,46 +1,23 @@
-import { useEffect, useState, } from 'react';
 import { Box, CircularProgress, Text, Button, HStack, useToast, } from '@chakra-ui/react';
-import Timeout = NodeJS.Timeout;
-import { Otp, } from '../../../electron-src/interfaces';
-import totp from 'totp-generator';
+import { OtpCode, } from '../../../electron-src/interfaces';
 
 interface Props {
-  otp: Otp,
+  otpCode: OtpCode,
 }
 
 const OtpItem = ({
-  otp,
+  otpCode,
 }: Props) => {
-  const [otpTimeValue, setOtpTimeValue,] = useState<number>(0);
-  const [otpCode, setOtpCode,] = useState<string>('------');
-
   const toast = useToast();
 
-  useEffect(() => {
-    const intervalTime: number = 500;
-    const intervalId: Timeout = setInterval(() => {
-      const now: Date = new Date();
-      const time: number = now.getSeconds() * 1000 + now.getMilliseconds();
-      const newOtpTimeValue: number = (time % 30000) / 30000 * 100;
-      setOtpTimeValue(newOtpTimeValue);
-      if ((time % ( 30 * 1000)) <= intervalTime) {
-        setOtpCode(totp(otp.secret));
-      }
-    }, intervalTime);
-    setOtpCode(totp(otp.secret));
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
   const onClickCopy = async () => {
-    await navigator.clipboard.writeText(otpCode);
+    await navigator.clipboard.writeText(otpCode.code);
     showCopyToast();
   };
 
   function showCopyToast () {
     toast({
-      title: `${otpCode} 복사`,
+      title: `${otpCode.code} 복사`,
       position: 'top',
       duration: 2000,
     });
@@ -49,11 +26,11 @@ const OtpItem = ({
   return (
     <Box p={5} shadow='md' borderWidth='1px'>
       <HStack>
-        <Text fontSize='md'>{`${otp.issuer} (${otp.user})`}</Text>
+        <Text fontSize='md'>{`${otpCode.issuer} (${otpCode.user})`}</Text>
       </HStack>
       <HStack>
-        <Text marginLeft='auto' marginRight='auto' fontSize='xx-large'>{otpCode}</Text>
-        <CircularProgress value={otpTimeValue} color={otpTimeValue < 80 ? 'green.300' : 'red.300'}/>
+        <Text marginLeft='auto' marginRight='auto' fontSize='xx-large'>{otpCode.code}</Text>
+        <CircularProgress value={otpCode.progress} color={otpCode.progress < 80 ? 'green.300' : 'red.300'}/>
         <Button size='sm' onClick={onClickCopy}>OTP 복사</Button>
       </HStack>
     </Box>
