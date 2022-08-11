@@ -62,11 +62,11 @@ const MainPasswordModal = ({
     BrowserStorage.setPassword(password);
   };
 
-  function clear() {
+  function clear () {
     setShowPassword(false);
     setShowValidate(false);
     setPassword('');
-    setValidate('')
+    setValidate('');
     setDisabledSaveButton(true);
   }
 

@@ -1,13 +1,12 @@
 import React, { ReactNode, useEffect, useState, } from 'react';
 import Head from 'next/head';
-
 import MainPasswordModal from './MainPasswordModal';
-import { PasswordStatus, } from '../../electron-src/interfaces';
+import { PasswordStatus, PasswordStatusType, } from '../../electron-src/interfaces';
 import PasswordModal from './PasswordModal';
 import { BrowserStorage, } from '../utils';
-import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer } from '@chakra-ui/react';
+import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
-import { SignOutIcon, AddIcon, } from '../icons';
+import { AddIcon, SignOutIcon, } from '../icons';
 import OtpURLModal from './OtpURLModal';
 
 type Props = {
@@ -32,7 +31,7 @@ const Layout = ({
       } else if (passwordStatus.type === 'INVALIDATE') {
         setOpenPasswordModal(true);
       }
-      global.ipcRenderer.send('getOtps', {
+      global.ipcRenderer.send('getOtpList', {
         password: BrowserStorage.getPassword(),
       });
     };

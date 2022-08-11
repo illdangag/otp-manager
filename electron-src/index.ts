@@ -8,7 +8,7 @@ import { app, BrowserWindow, ipcMain, IpcMainEvent, } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 
-import { Otp, PasswordStatus, } from './interfaces';
+import { Otp, PasswordStatus, } from '../electron-src/interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 
 const store = new Store();
@@ -99,12 +99,12 @@ ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
   console.log(otps);
 });
 
-ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
+ipcMain.on('getOtpList', (event: IpcMainEvent, args: any) => {
   const password: string = args.password;
   const otpsData = store.get('otps');
   console.log(otpsData);
   if (otpsData == null) {
-    event.sender.send('getOtps', []);
+    event.sender.send('getOtpList', []);
   } else {
     const otps: Otp[] = otpsData ? otpsData as Otp[] : [];
     try {
@@ -112,10 +112,10 @@ ipcMain.on('getOtps', (event: IpcMainEvent, args: any) => {
         opt.secret = decrypt(opt.secret, password);
       }
     } catch {
-      event.sender.send('getOtps', []);
+      event.sender.send('getOtpList', []);
       return;
     }
-    event.sender.send('getOtps', otps);
+    event.sender.send('getOtpList', otps);
   }
 });
 

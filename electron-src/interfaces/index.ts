@@ -5,7 +5,12 @@ export type Otp = {
   issuer: string
 }
 
-export type PasswordStatusType = 'NOT_SETTING' | 'INVALIDATE' | 'VALIDATE';
+const PasswordStatusType = {
+  NOT_SETTING: 'NOT_SETTING',
+  INVALIDATE: 'INVALIDATE',
+  VALIDATE: 'VALIDATE',
+} as const;
+export type PasswordStatusType = typeof PasswordStatusType[keyof typeof PasswordStatusType];
 
 export type PasswordStatus = {
   type: PasswordStatusType

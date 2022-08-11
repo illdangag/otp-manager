@@ -9,13 +9,13 @@ const IndexPage = () => {
   const [otpList, setOtpList,] = useState<Otp[]>([]);
 
   useEffect(() => {
-    const getOtpsHandler = (_event, args) => {
+    const getOtpListHandler = (_event, args) => {
       setOtpList(args as Otp[]);
     };
-    global.ipcRenderer.addListener('getOtps', getOtpsHandler);
+    global.ipcRenderer.addListener('getOtpList', getOtpListHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('getOtps', getOtpsHandler);
+      global.ipcRenderer.removeListener('getOtpList', getOtpListHandler);
     };
   }, []);
 

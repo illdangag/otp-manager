@@ -1,9 +1,20 @@
 import { useEffect, useState, } from 'react';
 import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, InputGroup, InputRightElement, VStack, Text, useToast,
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
-import { PasswordStatus, } from '../../../electron-src/interfaces';
+import { PasswordStatus, PasswordStatusType, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 import ResetPasswordModal from '../ResetPasswordModal';
 
@@ -17,13 +28,13 @@ const PasswordModal = ({
   onClose = () => {},
 }: Props) => {
 
-  const [password, setPassword,] = useState('');
-  const [isShowPassword, setShowPassword,] = useState(false);
-  const [incorrectPassword, setIncorrectPassword,] = useState(false);
-  const [attemptPassword, setAttemptPassword,] = useState(false);
-  const [isShowResetPasswordModal, setShowResetPasswordModal,] = useState(false);
+  const [password, setPassword,] = useState<string>('');
+  const [isShowPassword, setShowPassword,] = useState<boolean>(false);
+  const [incorrectPassword, setIncorrectPassword,] = useState<boolean>(false);
+  const [attemptPassword, setAttemptPassword,] = useState<boolean>(false);
+  const [isShowResetPasswordModal, setShowResetPasswordModal,] = useState<boolean>(false);
 
-  const toast = useToast()
+  const toast = useToast();
 
   useEffect(() => {
     const getSettingHandler = (_event, args) => {

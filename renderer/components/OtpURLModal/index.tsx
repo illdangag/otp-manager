@@ -1,7 +1,7 @@
 import { useEffect, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, Text, InputGroup, InputRightElement,
+  Button, Input, Text, InputGroup, InputRightElement, useToast,
 } from '@chakra-ui/react';
 import { useState, } from 'react';
 import { Otp, } from '../../../electron-src/interfaces';
@@ -17,20 +17,22 @@ const OtpURLModal = ({
   onClose = () => {},
 }: Props) => {
 
-  const [url, setUrl,] = useState('');
-  const [user, setUser,] = useState('');
-  const [secret, setSecret,] = useState('');
-  const [issuer, setIssuer,] = useState('');
-  const [disabledEditIssuer, setDisabledEditIssuer,] = useState(true);
-  const [disabledEditUser, setDisabledEditUser,] = useState(true);
-  const [disabledEditIssuerButton, setDisabledEditIssuerButton,] = useState(true);
-  const [disabledEditUserButton, setDisabledEditUserButton,] = useState(true);
-  const [disabledSaveButton, setDisabledSaveButton,] = useState(true);
+  const [url, setUrl,] = useState<string>('');
+  const [user, setUser,] = useState<string>('');
+  const [secret, setSecret,] = useState<string>('');
+  const [issuer, setIssuer,] = useState<string>('');
+  const [disabledEditIssuer, setDisabledEditIssuer,] = useState<boolean>(true);
+  const [disabledEditUser, setDisabledEditUser,] = useState<boolean>(true);
+  const [disabledEditIssuerButton, setDisabledEditIssuerButton,] = useState<boolean>(true);
+  const [disabledEditUserButton, setDisabledEditUserButton,] = useState<boolean>(true);
+  const [disabledSaveButton, setDisabledSaveButton,] = useState<boolean>(true);
+
+  const toast = useToast();
 
   useEffect(() => {
     const setOtpHandler = (_event, args) => {
       if (args.result) {
-        global.ipcRenderer.send('getOtps', {
+        global.ipcRenderer.send('getOtpList', {
           password: BrowserStorage.getPassword(),
         });
         onClose();
@@ -120,6 +122,7 @@ const OtpURLModal = ({
       otp: otp,
       password: BrowserStorage.getPassword(),
     });
+    showAddOTPToast();
   };
 
   const onClickCancel = () => {
@@ -137,6 +140,14 @@ const OtpURLModal = ({
     setDisabledEditIssuerButton(true);
     setDisabledEditUserButton(true);
     setDisabledSaveButton(true);
+  }
+
+  function showAddOTPToast () {
+    toast({
+      title: `OTP 추가`,
+      position: 'top',
+      duration: 2000,
+    });
   }
 
   return (
