@@ -1,20 +1,7 @@
 import { useEffect, useState, } from 'react';
-import {
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import { PasswordStatus, PasswordStatusType, } from '../../../electron-src/interfaces';
+import { Button, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter,
+  ModalHeader, ModalOverlay, Text, useToast, VStack, } from '@chakra-ui/react';
+import { PasswordStatus, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 import ResetPasswordModal from '../ResetPasswordModal';
 

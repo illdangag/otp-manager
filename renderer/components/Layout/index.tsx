@@ -1,13 +1,13 @@
 import React, { ReactNode, useEffect, useState, } from 'react';
 import Head from 'next/head';
-import MainPasswordModal from './MainPasswordModal';
-import { PasswordStatus, PasswordStatusType, } from '../../electron-src/interfaces';
-import PasswordModal from './PasswordModal';
-import { BrowserStorage, } from '../utils';
+import MainPasswordModal from '../MainPasswordModal';
+import { PasswordStatus, } from '../../../electron-src/interfaces';
+import PasswordModal from '../PasswordModal';
+import { BrowserStorage, } from '../../utils';
 import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
-import { AddIcon, SignOutIcon, } from '../icons';
-import OtpURLModal from './OtpURLModal';
+import { AddIcon, SignOutIcon, } from '../../icons';
+import OtpURLModal from '../OtpURLModal';
 
 type Props = {
   children: ReactNode

@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { Otp, OtpCode, } from '../../electron-src/interfaces';
 import OtpItem from '../components/OtpItem';
 import totp from 'totp-generator';
-import { useInterval } from 'usehooks-ts'
+import { useInterval, } from 'usehooks-ts';
 
 const IndexPage = () => {
 

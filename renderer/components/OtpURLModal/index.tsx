@@ -144,7 +144,7 @@ const OtpURLModal = ({
 
   function showAddOTPToast () {
     toast({
-      title: `OTP 추가`,
+      title: 'OTP 추가',
       position: 'top',
       duration: 2000,
     });
