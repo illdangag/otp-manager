@@ -38,6 +38,7 @@
     "@typescript-eslint/parser": "^5.32.0",
     "electron": "^13",
     "electron-builder": "^23.0.3",
+    "electron-log": "^4.4.8",
     "eslint": "^8.21.0",
     "next": "latest",
     "rimraf": "^3.0.0",

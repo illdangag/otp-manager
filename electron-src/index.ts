@@ -2,13 +2,14 @@
 import { join, } from 'path';
 import { format, } from 'url';
 import Store from 'electron-store';
+import log from 'electron-log';
 
 // Packages
 import { app, BrowserWindow, ipcMain, IpcMainEvent, } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 
-import { Otp, PasswordStatus, PasswordStatusType, } from '../electron-src/interfaces';
+import { Otp, PasswordStatus, PasswordStatusType, } from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 
 const store = new Store();
@@ -38,15 +39,17 @@ app.on('ready', async () => {
     });
 
   void await mainWindow.loadURL(url);
+  log.debug('Application Start');
 });
 
 // Quit the app once all windows are closed
 app.on('window-all-closed', () => {
   app.quit();
+  log.debug('Application End');
 });
 
 ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
-  console.log('clear');
+  log.debug('clear application storage');
   store.clear();
 });
 
@@ -126,7 +129,7 @@ ipcMain.on('updateOtp', (event: IpcMainEvent, args: any) => {
 ipcMain.on('deleteOtp', (event: IpcMainEvent, args: any) => {
   const password: string = args.password;
   const passwordStatusType: PasswordStatusType = validatePassword(password); // TODO 비밀번호 검증 실패한 경우 처리
-  console.log(passwordStatusType);
+  log.debug(passwordStatusType);
 
   const deleteOtpId: string = args.id;
   const optList: Otp[] = getOtpList(password, false);
@@ -145,7 +148,6 @@ const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
     return [];
   } else {
     const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
-    console.log(otpList);
     try {
       for (let opt of otpList) {
         if (isDecrypt) {
@@ -180,7 +182,7 @@ const validatePassword = (password: string): PasswordStatusType => {
       return 'INVALIDATE';
     }
   }
-  console.log('validatePassword', passwordStatusType);
+  log.debug(passwordStatusType);
   return passwordStatusType;
 };
 
