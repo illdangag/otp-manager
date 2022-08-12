@@ -1,7 +1,7 @@
 import { useEffect, useState, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, Text, InputGroup, InputRightElement, useToast,
+  Button, Input, Text, useToast,
 } from '@chakra-ui/react';
 import { Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';

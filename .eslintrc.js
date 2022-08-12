@@ -39,7 +39,14 @@ module.exports = {
     'no-trailing-spaces': 'error',
     '@typescript-eslint/no-floating-promises': 'error',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['warn',],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      },
+    ],
     'arrow-spacing': ['error', {
       'before': true,
       'after': true,

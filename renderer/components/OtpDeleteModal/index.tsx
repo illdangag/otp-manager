@@ -2,7 +2,7 @@ import { useEffect, } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Text, Box, Divider, useToast, } from '@chakra-ui/react';
 import { Otp, } from '../../../electron-src/interfaces';
-import { BrowserStorage } from '../../utils';
+import { BrowserStorage, } from '../../utils';
 
 interface Props {
   isOpen?: boolean,
@@ -32,7 +32,7 @@ const OtpDeleteModal = ({
           password: BrowserStorage.getPassword(),
         });
       }
-    }
+    };
     global.ipcRenderer.addListener('deleteOtp', deleteOtpHandler);
   }, []);
 

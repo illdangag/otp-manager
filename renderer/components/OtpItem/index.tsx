@@ -37,7 +37,7 @@ const OtpItem = ({
 
   const onCloseEditModal = () => {
     setOpenEditModal(false);
-  }
+  };
 
   const onClickDeleteButton = () => {
     setOpenDeleteModal(true);
@@ -50,7 +50,7 @@ const OtpItem = ({
   const getTitle = () => {
     return `${otpCode.otp.issuerDescription ? otpCode.otp.issuerDescription : otpCode.otp.issuer} ` +
      `(${otpCode.otp.userDescription ? otpCode.otp.userDescription : otpCode.otp.user})`;
-  }
+  };
 
   return (
     <>

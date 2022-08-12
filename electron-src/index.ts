@@ -157,7 +157,7 @@ const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
     }
     return otpList;
   }
-}
+};
 
 const getOtp = (password: string, id: string, isDecrypt: boolean = true): Otp | null => {
   const otpList: Otp[] = getOtpList(password, isDecrypt);
@@ -167,7 +167,7 @@ const getOtp = (password: string, id: string, isDecrypt: boolean = true): Otp | 
   } else {
     return otpList[index];
   }
-}
+};
 
 const validatePassword = (password: string): PasswordStatusType => {
   const encryptedPassword: string | undefined = store.get('encryptedPassword') as string;
