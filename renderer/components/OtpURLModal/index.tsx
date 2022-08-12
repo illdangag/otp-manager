@@ -1,9 +1,8 @@
-import { useEffect, } from 'react';
+import { useEffect, useState, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Input, Text, InputGroup, InputRightElement, useToast,
 } from '@chakra-ui/react';
-import { useState, } from 'react';
 import { Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 
@@ -143,7 +142,7 @@ const OtpURLModal = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} >
+    <Modal isOpen={isOpen} onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>

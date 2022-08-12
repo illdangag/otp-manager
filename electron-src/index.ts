@@ -123,6 +123,20 @@ ipcMain.on('updateOtp', (event: IpcMainEvent, args: any) => {
   });
 });
 
+ipcMain.on('deleteOtp', (event: IpcMainEvent, args: any) => {
+  const password: string = args.password;
+  const passwordStatusType: PasswordStatusType = validatePassword(password); // TODO 비밀번호 검증 실패한 경우 처리
+  console.log(passwordStatusType);
+
+  const deleteOtpId: string = args.id;
+  const optList: Otp[] = getOtpList(password, false);
+  const deletedOtpList: Otp[] = optList.filter(item => item.id !== deleteOtpId);
+  store.set('otpList', deletedOtpList);
+  event.sender.send('deleteOtp', {
+    error: null,
+  });
+});
+
 /////////////////////////////////
 
 const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
@@ -145,8 +159,8 @@ const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
   }
 }
 
-const getOtp = (password: string, id: string): Otp | null => {
-  const otpList: Otp[] = getOtpList(password);
+const getOtp = (password: string, id: string, isDecrypt: boolean = true): Otp | null => {
+  const otpList: Otp[] = getOtpList(password, isDecrypt);
   const index: number = otpList.findIndex(item => item.id === id);
   if (index < 0) {
     return null;

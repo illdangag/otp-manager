@@ -3,6 +3,8 @@ import { Box, CircularProgress, Text, Button, HStack, useToast, IconButton, Spac
 import OtpEditModal from '../OtpEditModal';
 import { OtpCode, } from '../../../electron-src/interfaces';
 import EditIcon from '../../icons/EditIcon';
+import { DeleteIcon, } from '../../icons';
+import OtpDeleteModal from '../OtpDeleteModal';
 
 interface Props {
   otpCode: OtpCode,
@@ -14,6 +16,7 @@ const OtpItem = ({
   const toast = useToast();
 
   const [isOpenEditModal, setOpenEditModal,] = useState<boolean>(false);
+  const [isOpenDeleteModal, setOpenDeleteModal,] = useState<boolean>(false);
 
   const onClickCopy = async () => {
     await navigator.clipboard.writeText(otpCode.code);
@@ -28,17 +31,25 @@ const OtpItem = ({
     });
   }
 
-  const onClickEdit = () => {
+  const onClickEditButton = () => {
     setOpenEditModal(true);
   };
 
-  const onCloseOtpEditModal = () => {
+  const onCloseEditModal = () => {
     setOpenEditModal(false);
   }
 
+  const onClickDeleteButton = () => {
+    setOpenDeleteModal(true);
+  };
+
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
   const getTitle = () => {
-    return `${otpCode.issuerDescription ? otpCode.issuerDescription : otpCode.issuer} ` +
-     `(${otpCode.userDescription ? otpCode.userDescription : otpCode.user})`;
+    return `${otpCode.otp.issuerDescription ? otpCode.otp.issuerDescription : otpCode.otp.issuer} ` +
+     `(${otpCode.otp.userDescription ? otpCode.otp.userDescription : otpCode.otp.user})`;
   }
 
   return (
@@ -47,7 +58,8 @@ const OtpItem = ({
         <HStack>
           <Text fontSize='md'>{getTitle()}</Text>
           <Spacer/>
-          <IconButton aria-label='Edit OTP' variant='link' size='sm' icon={<EditIcon/>} onClick={onClickEdit}/>
+          <IconButton aria-label='Edit OTP' variant='link' size='sm' icon={<EditIcon/>} onClick={onClickEditButton}/>
+          <IconButton aria-label='Delete OTP' variant='link' size='sm' icon={<DeleteIcon/>} onClick={onClickDeleteButton}/>
         </HStack>
         <HStack>
           <Text marginLeft='auto' marginRight='auto' fontSize='xx-large'>{otpCode.code}</Text>
@@ -56,9 +68,14 @@ const OtpItem = ({
         </HStack>
       </Box>
       <OtpEditModal
-        otpId={otpCode.id}
+        otp={otpCode.otp}
         isOpen={isOpenEditModal}
-        onClose={onCloseOtpEditModal}
+        onClose={onCloseEditModal}
+      />
+      <OtpDeleteModal
+        otp={otpCode.otp}
+        isOpen={isOpenDeleteModal}
+        onClose={onCloseDeleteModal}
       />
     </>
   );

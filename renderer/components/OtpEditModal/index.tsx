@@ -1,35 +1,22 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
+  ModalFooter, Button, Input, Text, } from '@chakra-ui/react';
 import { BrowserStorage, } from '../../utils';
 import { Otp, } from '../../../electron-src/interfaces';
 
 interface Props {
   isOpen?: boolean,
   onClose?: () => void,
-  otpId: string,
+  otp: Otp,
 }
 
 const OtpEditModal = ({
   isOpen = false,
   onClose = () => {},
-  otpId,
+  otp,
 }: Props) => {
 
   useEffect(() => {
-    const getOtpHandler = (_event, args) => {
-      if (args.otp) {
-        const otp: Otp = args.otp as Otp;
-
-        setIssuer(otp.issuer);
-        setUser(otp.user);
-
-        const newIssuerDescription: string = otp.issuerDescription ? otp.issuerDescription : '';
-        const newUserDescription: string = otp.userDescription ? otp.userDescription : '';
-        setIssuerDescription(newIssuerDescription);
-        setUserDescription(newUserDescription);
-      }
-    };
-    global.ipcRenderer.addListener('getOtp', getOtpHandler);
 
     const updateOtpHandler = (_event, args) => {
       const error: string | null = args.error;
@@ -43,25 +30,12 @@ const OtpEditModal = ({
     global.ipcRenderer.addListener('updateOtp', updateOtpHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('getOtp', getOtpHandler);
       global.ipcRenderer.removeListener('updateOtp', updateOtpHandler);
     };
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      global.ipcRenderer.send('getOtp', {
-        id: otpId,
-        password: BrowserStorage.getPassword(),
-      });
-    }
-  }, [isOpen,]);
-
-  const [issuer, setIssuer,] = useState<string>('');
-  const [user, setUser,] = useState<string>('');
-
-  const [issuerDescription, setIssuerDescription,] = useState<string>('');
-  const [userDescription, setUserDescription,] = useState<string>('');
+  const [issuerDescription, setIssuerDescription,] = useState<string>(otp.issuerDescription);
+  const [userDescription, setUserDescription,] = useState<string>(otp.userDescription);
 
   const onChangeIssuer = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newIssuer: string = event.target.value;
@@ -77,7 +51,7 @@ const OtpEditModal = ({
     global.ipcRenderer.send('updateOtp', {
       password: BrowserStorage.getPassword(),
       otp: {
-        id: otpId,
+        id: otp.id,
         issuerDescription,
         userDescription,
       } as Otp,
@@ -93,14 +67,14 @@ const OtpEditModal = ({
           <Text>Issuer</Text>
           <Input
             marginTop='0.2rem'
-            placeholder={issuer}
+            placeholder={otp.issuer}
             value={issuerDescription}
             onChange={onChangeIssuer}
           />
           <Text marginTop='1rem'>User</Text>
           <Input
             marginTop='0.2rem'
-            placeholder={user}
+            placeholder={otp.user}
             value={userDescription}
             onChange={onChangeUser}
           />

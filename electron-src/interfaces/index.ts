@@ -8,11 +8,7 @@ export type Otp = {
 }
 
 export type OtpCode = {
-  id?: string
-  user: string
-  issuer: string
-  userDescription: string
-  issuerDescription: string
+  otp: Otp,
   code: string
   progress: number
 }

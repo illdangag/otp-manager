@@ -26,13 +26,13 @@ const IndexPage = () => {
   useInterval(() => {
     const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
     setOtpCodeList(newOtpCodeList);
-  }, intervalTime);;
+  }, intervalTime);
 
   function getOTPCode (otp: Otp, otpCodeList: OtpCode[]): OtpCode {
     const now: Date = new Date();
     const time: number = now.getSeconds() * 1000 + now.getMilliseconds();
 
-    const index: number = otpCodeList.findIndex(item => item.id === otp.id);
+    const index: number = otpCodeList.findIndex(item => item.otp.id === otp.id);
     let code: string = '';
     if (index === -1) {
       code = totp(otp.secret);
@@ -45,11 +45,7 @@ const IndexPage = () => {
     }
 
     return {
-      id: otp.id,
-      issuer: otp.issuer,
-      user: otp.user,
-      issuerDescription: otp.issuerDescription,
-      userDescription: otp.userDescription,
+      otp,
       code: code,
       progress: (time % 30000) / 30000 * 100,
     };
