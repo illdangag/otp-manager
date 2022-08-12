@@ -1,3 +1,7 @@
+# OTP Manager
+
+---
+
 # Electron with Typescript application example
 
 This example show how you can use Next.js inside an Electron application to avoid a lot of configuration, use Next.js router as view and use server-render to speed up the initial render of the application. Both Next.js and Electron layers are written in TypeScript and compiled to JavaScript during the build process.
