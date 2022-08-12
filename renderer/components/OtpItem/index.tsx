@@ -54,7 +54,7 @@ const OtpItem = ({
 
   return (
     <>
-      <Box p={5} shadow='md' borderWidth='1px'>
+      <Box padding='1rem' borderWidth='1px' borderRadius='1rem'>
         <HStack>
           <Text fontSize='md'>{getTitle()}</Text>
           <Spacer/>

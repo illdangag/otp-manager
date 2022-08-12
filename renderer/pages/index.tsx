@@ -5,6 +5,7 @@ import { Otp, OtpCode, } from '../../electron-src/interfaces';
 import OtpItem from '../components/OtpItem';
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
+import OtpEmpty from '../components/OtpEmpty';
 
 const IndexPage = () => {
 
@@ -54,6 +55,7 @@ const IndexPage = () => {
   return (
     <Layout title='OTP Manager'>
       <VStack>
+        {otpCodeList.length === 0 && <OtpEmpty/>}
         {otpCodeList.map((item, index) => (
           <Container key={index}>
             <OtpItem otpCode={item}/>

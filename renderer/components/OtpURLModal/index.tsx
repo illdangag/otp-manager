@@ -115,7 +115,12 @@ const OtpURLModal = ({
       otp: otp,
       password: BrowserStorage.getPassword(),
     });
-    showAddOTPToast();
+
+    toast({
+      title: 'OTP 추가',
+      position: 'top',
+      duration: 2000,
+    });
   };
 
   const onClickCancel = () => {
@@ -131,14 +136,6 @@ const OtpURLModal = ({
     setDisabledEditIssuer(true);
     setDisabledEditUser(true);
     setDisabledSaveButton(true);
-  }
-
-  function showAddOTPToast () {
-    toast({
-      title: 'OTP 추가',
-      position: 'top',
-      duration: 2000,
-    });
   }
 
   return (

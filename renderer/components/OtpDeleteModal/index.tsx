@@ -1,8 +1,6 @@
 import { useEffect, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Text, Box, Divider,
-} from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
+  Button, Text, Box, Divider, useToast, } from '@chakra-ui/react';
 import { Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage } from '../../utils';
 
@@ -18,10 +16,17 @@ const OtpDeleteModal = ({
   otp,
 }: Props) => {
 
+  const toast = useToast();
+
   useEffect(() => {
     const deleteOtpHandler = (_event, args: any) => {
       const error: string | null = args.error;
       if (error === null) {
+        toast({
+          title: 'OTP 삭제',
+          position: 'top',
+          duration: 2000,
+        });
         onClose();
         global.ipcRenderer.send('getOtpList', {
           password: BrowserStorage.getPassword(),
