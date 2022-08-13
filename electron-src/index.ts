@@ -12,12 +12,21 @@ import { v4, } from 'uuid';
 
 import {
   ClearRequest,
-  ClearResponse, CreateOtpRequest, CreateOtpResponse, GetOtpListRequest, GetOtpListResponse,
+  ClearResponse,
+  CreateOtpRequest,
+  CreateOtpResponse,
+  DeleteOtpRequest,
+  DeleteOtpResponse,
+  GetOtpListRequest,
+  GetOtpListResponse,
   MainPasswordRequest,
   MainPasswordResponse,
   Otp,
-  PasswordStatusType, UpdateOtpRequest, UpdateOtpResponse,
-  ValidatePasswordRequest, ValidatePasswordResponse,
+  PasswordStatusType,
+  UpdateOtpRequest,
+  UpdateOtpResponse,
+  ValidatePasswordRequest,
+  ValidatePasswordResponse,
 } from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 
@@ -137,23 +146,8 @@ ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
   event.sender.send(callbackChannel, response);
 });
 
-ipcMain.on('getOtp', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
-  const otpId: string = args.id;
-
-  const passwordStatusType: PasswordStatusType = validatePassword(password);
-  if (passwordStatusType !== 'VALIDATE') {
-    event.sender.send('getSetting', passwordStatusType);
-    return;
-  }
-
-  event.sender.send('getOtp', {
-    otp: getOtp(password, otpId),
-  });
-});
-
 /**
- * OTP 정보 갱신
+ * OTP 갱신
  */
 ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
   log.debug('[updateOtp]', request);
@@ -174,18 +168,24 @@ ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
   event.sender.send(callbackChannel, response);
 });
 
-ipcMain.on('deleteOtp', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
-  const passwordStatusType: PasswordStatusType = validatePassword(password); // TODO 비밀번호 검증 실패한 경우 처리
-  log.debug(passwordStatusType);
+/**
+ * OTP 삭제
+ */
+ipcMain.on('deleteOtp', (event: IpcMainEvent, request: DeleteOtpRequest) => {
+  log.debug('[deleteOtp]', request);
+  const password: string = request.password; // TODO 비밀번호 검증
 
-  const deleteOtpId: string = args.id;
+  const deleteOtpId: string = request.id;
   const optList: Otp[] = getOtpList(password, false);
   const deletedOtpList: Otp[] = optList.filter(item => item.id !== deleteOtpId);
   store.set('otpList', deletedOtpList);
-  event.sender.send('deleteOtp', {
+
+  const response: DeleteOtpResponse = {
     error: null,
-  });
+    otpList: getOtpList(password, true),
+  };
+  const callbackChannel: string = request.callbackChannel || 'deleteOtp';
+  event.sender.send(callbackChannel, response);
 });
 
 /////////////////////////////////
@@ -217,16 +217,6 @@ const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
       return [];
     }
     return otpList;
-  }
-};
-
-const getOtp = (password: string, id: string, isDecrypt: boolean = true): Otp | null => {
-  const otpList: Otp[] = getOtpList(password, isDecrypt);
-  const index: number = otpList.findIndex(item => item.id === id);
-  if (index < 0) {
-    return null;
-  } else {
-    return otpList[index];
   }
 };
 

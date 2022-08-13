@@ -71,6 +71,13 @@ export interface UpdateOtpResponse extends IpcResponse {
   otpList: Otp[],
 }
 
+export interface DeleteOtpRequest extends IpcRequest {
+  id: string,
+}
+export interface DeleteOtpResponse extends IpcResponse {
+  otpList: Otp[],
+}
+
 // recoil state
 interface ModalState {
   isOpen: boolean,

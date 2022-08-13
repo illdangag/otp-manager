@@ -1,22 +1,22 @@
 import { useEffect, useState, } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Text, Box, Divider, useToast, } from '@chakra-ui/react';
-import { Otp, OtpDeleteModalState, } from '../../../electron-src/interfaces';
+import { DeleteOtpRequest, DeleteOtpResponse, Otp, OtpDeleteModalState, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
-import { useRecoilState, } from 'recoil';
-import { otpDeleteModalStateAtom, } from '../../store';
+import { useRecoilState, useSetRecoilState, } from 'recoil';
+import { otpDeleteModalStateAtom, otpListAtom, } from '../../store';
 
 const OtpDeleteModal = () => {
 
   const [otp, setOtp,] = useState<Otp | null>(null);
   const [otpDeleteModalState, setOtpDeleteModalState,] = useRecoilState<OtpDeleteModalState>(otpDeleteModalStateAtom);
+  const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const toast = useToast();
 
   useEffect(() => {
-    const deleteOtpHandler = (_event, args: any) => {
-      const error: string | null = args.error;
-      if (error === null) {
+    const deleteOtpHandler = (_event, response: DeleteOtpResponse) => {
+      if (response.error === null) {
         toast({
           title: 'OTP 삭제',
           position: 'top',
@@ -26,9 +26,7 @@ const OtpDeleteModal = () => {
           isOpen: false,
           otp: null,
         });
-        global.ipcRenderer.send('getOtpList', {
-          password: BrowserStorage.getPassword(),
-        });
+        setOtpList(response.otpList);
       }
     };
     global.ipcRenderer.addListener('deleteOtp', deleteOtpHandler);
@@ -40,10 +38,11 @@ const OtpDeleteModal = () => {
 
 
   const onClickDeleteButton = () => {
-    global.ipcRenderer.send('deleteOtp', {
+    const request: DeleteOtpRequest = {
       password: BrowserStorage.getPassword(),
       id: otp.id,
-    });
+    };
+    global.ipcRenderer.send('deleteOtp', request);
   };
 
   const onClickCloseButton = () => {
