@@ -1,20 +1,15 @@
-import { useEffect, } from 'react';
+import { useEffect, useState, } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
   Button, Text, Box, Divider, useToast, } from '@chakra-ui/react';
-import { Otp, } from '../../../electron-src/interfaces';
+import { Otp, OtpDeleteModalState, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
+import { useRecoilState, } from 'recoil';
+import { otpDeleteModalStateAtom, } from '../../store';
 
-interface Props {
-  isOpen?: boolean,
-  onClose?: () => void,
-  otp: Otp,
-}
+const OtpDeleteModal = () => {
 
-const OtpDeleteModal = ({
-  isOpen = false,
-  onClose = () => {},
-  otp,
-}: Props) => {
+  const [otp, setOtp,] = useState<Otp | null>(null);
+  const [otpDeleteModalState, setOtpDeleteModalState,] = useRecoilState<OtpDeleteModalState>(otpDeleteModalStateAtom);
 
   const toast = useToast();
 
@@ -27,7 +22,10 @@ const OtpDeleteModal = ({
           position: 'top',
           duration: 2000,
         });
-        onClose();
+        setOtpDeleteModalState({
+          isOpen: false,
+          otp: null,
+        });
         global.ipcRenderer.send('getOtpList', {
           password: BrowserStorage.getPassword(),
         });
@@ -35,6 +33,11 @@ const OtpDeleteModal = ({
     };
     global.ipcRenderer.addListener('deleteOtp', deleteOtpHandler);
   }, []);
+
+  useEffect(() => {
+    setOtp(otpDeleteModalState.otp);
+  }, [otpDeleteModalState,]);
+
 
   const onClickDeleteButton = () => {
     global.ipcRenderer.send('deleteOtp', {
@@ -44,23 +47,26 @@ const OtpDeleteModal = ({
   };
 
   const onClickCloseButton = () => {
-    onClose();
+    setOtpDeleteModalState({
+      isOpen: false,
+      otp: null,
+    });
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}}>
+    <Modal isOpen={otpDeleteModalState.isOpen} onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 삭제</ModalHeader>
         <ModalBody paddingBottom='2rem'>
           <Box borderWidth='1px' borderRadius='.6rem' padding='.6rem'>
             <Text fontSize='sm'>Issuer</Text>
-            <Text fontSize='xl'>{otp.issuer}</Text>
-            {otp.issuerDescription && <Text fontSize='md'>{otp.issuerDescription}</Text>}
+            <Text fontSize='xl'>{otp !== null ? otp.issuer : ''}</Text>
+            {otp !== null && otp.issuerDescription && <Text fontSize='md'>{otp.issuerDescription}</Text>}
             <Divider marginTop='.8rem' marginBottom='.8rem'/>
             <Text fontSize='sm'>User</Text>
-            <Text fontSize='xl'>{otp.user}</Text>
-            {otp.userDescription && <Text fontSize='md'>{otp.userDescription}</Text>}
+            <Text fontSize='xl'>{otp !== null ? otp.user : ''}</Text>
+            {otp !== null && otp.userDescription && <Text fontSize='md'>{otp.userDescription}</Text>}
           </Box>
           <Text marginTop='1rem'>삭제 하시겠습니까?</Text>
         </ModalBody>

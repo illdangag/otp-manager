@@ -1,18 +1,15 @@
-import { useState, } from 'react';
 import { Box, Button, Center, Container, Text, VStack, } from '@chakra-ui/react';
 import { OtpListIcon, } from '../../icons';
-import OtpURLModal from '../OtpURLModal';
+import { useSetRecoilState, } from 'recoil';
+import { otpCreateModalStateAtom, } from '../../store';
+import { OtpCreateModalState, } from '../../../electron-src/interfaces';
 
 const OtpEmpty = () => {
-
-  const [isOpenOtpURLModal, setOpenOtpURLModal,] = useState<boolean>(false);
-
+  const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
   const onClickAddButton = () => {
-    setOpenOtpURLModal(true);
-  };
-
-  const onCloseOtpURLModal = () => {
-    setOpenOtpURLModal(false);
+    setOtpCreateModalState({
+      isOpen: true,
+    });
   };
 
   return (
@@ -28,7 +25,6 @@ const OtpEmpty = () => {
           </Center>
         </VStack>
       </Box>
-      <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
     </>
   );
 };

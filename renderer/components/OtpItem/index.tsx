@@ -1,10 +1,9 @@
-import { useState, } from 'react';
 import { Box, CircularProgress, Text, Button, HStack, useToast, IconButton, Spacer, } from '@chakra-ui/react';
-import OtpEditModal from '../OtpEditModal';
-import { OtpCode, } from '../../../electron-src/interfaces';
+import { OtpCode, OtpDeleteModalState, OtpUpdateModalState, } from '../../../electron-src/interfaces';
 import EditIcon from '../../icons/EditIcon';
 import { DeleteIcon, } from '../../icons';
-import OtpDeleteModal from '../OtpDeleteModal';
+import { useSetRecoilState, } from 'recoil';
+import { otpUpdateModalStateAtom, otpDeleteModalStateAtom, } from '../../store';
 
 interface Props {
   otpCode: OtpCode,
@@ -13,10 +12,9 @@ interface Props {
 const OtpItem = ({
   otpCode,
 }: Props) => {
+  const setOtpUpdateModalState = useSetRecoilState<OtpUpdateModalState>(otpUpdateModalStateAtom);
+  const setOtpDeleteModalState = useSetRecoilState<OtpDeleteModalState>(otpDeleteModalStateAtom);
   const toast = useToast();
-
-  const [isOpenEditModal, setOpenEditModal,] = useState<boolean>(false);
-  const [isOpenDeleteModal, setOpenDeleteModal,] = useState<boolean>(false);
 
   const onClickCopy = async () => {
     await navigator.clipboard.writeText(otpCode.code);
@@ -32,19 +30,17 @@ const OtpItem = ({
   }
 
   const onClickEditButton = () => {
-    setOpenEditModal(true);
-  };
-
-  const onCloseEditModal = () => {
-    setOpenEditModal(false);
+    setOtpUpdateModalState({
+      isOpen: true,
+      otp: otpCode.otp,
+    });
   };
 
   const onClickDeleteButton = () => {
-    setOpenDeleteModal(true);
-  };
-
-  const onCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
+    setOtpDeleteModalState({
+      isOpen: true,
+      otp: otpCode.otp,
+    });
   };
 
   const getTitle = () => {
@@ -67,16 +63,6 @@ const OtpItem = ({
           <Button size='sm' onClick={onClickCopy}>OTP 복사</Button>
         </HStack>
       </Box>
-      <OtpEditModal
-        otp={otpCode.otp}
-        isOpen={isOpenEditModal}
-        onClose={onCloseEditModal}
-      />
-      <OtpDeleteModal
-        otp={otpCode.otp}
-        isOpen={isOpenDeleteModal}
-        onClose={onCloseDeleteModal}
-      />
     </>
   );
 };

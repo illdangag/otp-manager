@@ -1,24 +1,38 @@
 import { useEffect, useState, } from 'react';
 import { Container, VStack, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
-import { Otp, OtpCode, } from '../../electron-src/interfaces';
+import {
+  GetOtpListRequest,
+  GetOtpListResponse,
+  Otp,
+  OtpCode,
+  PasswordStatusType,
+} from '../../electron-src/interfaces';
 import OtpItem from '../components/OtpItem';
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
 import OtpEmpty from '../components/OtpEmpty';
+import { useRecoilValue, useRecoilState, } from 'recoil';
+import { passwordStatusTypeAtom, otpListAtom, } from '../store';
+import { BrowserStorage, } from '../utils';
 
 const IndexPage = () => {
 
-  const [otpList, setOtpList,] = useState<Otp[]>([]);
   const [otpCodeList, setOtpCodeList,] = useState<OtpCode[]>([]);
+  const [otpList, setOtpList,] = useRecoilState<Otp[]>(otpListAtom);
+  const passwordStatusType = useRecoilValue<PasswordStatusType>(passwordStatusTypeAtom);
   const intervalTime: number = 500;
 
   useEffect(() => {
-    const getOtpListHandler = (_event, args) => {
-      setOtpList(args as Otp[]);
+    const getOtpListHandler = (_event, response: GetOtpListResponse) => {
+      setOtpList(response.otpList);
     };
     global.ipcRenderer.addListener('getOtpList', getOtpListHandler);
 
+    const request: GetOtpListRequest = {
+      password: BrowserStorage.getPassword(),
+    };
+    global.ipcRenderer.send('getOtpList', request);
     return () => {
       global.ipcRenderer.removeListener('getOtpList', getOtpListHandler);
     };
@@ -53,8 +67,9 @@ const IndexPage = () => {
   }
 
   return (
-    <Layout title='OTP Manager'>
+    <Layout title={passwordStatusType}>
       <VStack>
+        {passwordStatusType}
         {otpCodeList.length === 0 && <OtpEmpty/>}
         {otpCodeList.map((item, index) => (
           <Container key={index}>

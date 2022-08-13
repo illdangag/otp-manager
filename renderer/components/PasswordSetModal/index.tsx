@@ -1,19 +1,12 @@
 import { useEffect, useState, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, InputGroup, InputRightElement, VStack, Text,
-} from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
+  Button, Input, InputGroup, InputRightElement, VStack, Text, } from '@chakra-ui/react';
 import { BrowserStorage, } from '../../utils';
+import { MainPasswordResponse, PasswordSetModalState, PasswordStatusType, } from '../../../electron-src/interfaces';
+import { useSetRecoilState, useRecoilState, } from 'recoil';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, } from '../../store';
 
-interface Props {
-  isOpen?: boolean,
-  onClose?: () => void,
-}
-
-const MainPasswordModal = ({
-  isOpen = false,
-  onClose = () => {},
-}: Props) => {
+const PasswordSetModal = () => {
 
   const [isShowPassword, setShowPassword,] = useState(false);
   const [isShowValidate, setShowValidate,] = useState(false);
@@ -21,10 +14,17 @@ const MainPasswordModal = ({
   const [validate, setValidate,] = useState('');
   const [disabledSaveButton, setDisabledSaveButton,] = useState(true);
 
+  const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
+  const [passwordSetModalState, setPasswordSetModalState,] = useRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
+
   useEffect(() => {
-    const setMainPasswordHandler = (_event, args) => {
-      if (args.result) {
-        onClose();
+    const setMainPasswordHandler = (_event, response: MainPasswordResponse) => {
+      if (response.error === null) {
+        BrowserStorage.setPassword(password);
+        setPasswordStatusType('VALIDATE');
+        setPasswordSetModalState({
+          isOpen: false,
+        });
         clear();
       }
     };
@@ -59,7 +59,6 @@ const MainPasswordModal = ({
     global.ipcRenderer.send('setMainPassword', {
       password,
     });
-    BrowserStorage.setPassword(password);
   };
 
   function clear () {
@@ -71,7 +70,7 @@ const MainPasswordModal = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} >
+    <Modal isOpen={passwordSetModalState.isOpen} onClose={() => {}} >
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>초기 비밀번호 설정</ModalHeader>
@@ -113,4 +112,4 @@ const MainPasswordModal = ({
   );
 };
 
-export default MainPasswordModal;
+export default PasswordSetModal;

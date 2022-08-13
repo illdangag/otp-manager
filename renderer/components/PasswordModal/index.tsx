@@ -1,33 +1,34 @@
 import { useEffect, useState, } from 'react';
 import { Button, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter,
   ModalHeader, ModalOverlay, Text, useToast, VStack, } from '@chakra-ui/react';
-import { PasswordStatus, } from '../../../electron-src/interfaces';
+import {
+  PasswordModalState,
+  PasswordResetModalState,
+  PasswordStatusType,
+  ValidatePasswordResponse,
+} from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
-import ResetPasswordModal from '../ResetPasswordModal';
+import { useRecoilState, useSetRecoilState, } from 'recoil';
+import { passwordModalStateAtom, passwordResetModalStateAtom, } from '../../store';
 
-interface Props {
-  isOpen?: boolean,
-  onClose?: (isResetPassword: boolean) => void,
-}
-
-const PasswordModal = ({
-  isOpen = false,
-  onClose = () => {},
-}: Props) => {
-
+const PasswordModal = () => {
   const [password, setPassword,] = useState<string>('');
   const [isShowPassword, setShowPassword,] = useState<boolean>(false);
   const [incorrectPassword, setIncorrectPassword,] = useState<boolean>(false);
   const [attemptPassword, setAttemptPassword,] = useState<boolean>(false);
-  const [isShowResetPasswordModal, setShowResetPasswordModal,] = useState<boolean>(false);
+
+  const [passwordModalState, setPasswordModalState,] = useRecoilState<PasswordModalState>(passwordModalStateAtom);
+  const setPasswordResetModalState = useSetRecoilState<PasswordResetModalState>(passwordResetModalStateAtom);
 
   const toast = useToast();
 
   useEffect(() => {
-    const getSettingHandler = (_event, args) => {
-      const passwordStatus: PasswordStatus = args as PasswordStatus;
-      if (passwordStatus.type === 'VALIDATE') {
-        onClose(false);
+    const validatePasswordHandler = (_event, response: ValidatePasswordResponse) => {
+      const passwordStatusType: PasswordStatusType = response.type;
+      if (passwordStatusType === 'VALIDATE') {
+        setPasswordModalState({
+          isOpen: false,
+        });
         showSuccessToast();
         clear();
       } else {
@@ -35,10 +36,10 @@ const PasswordModal = ({
       }
     };
 
-    global.ipcRenderer.addListener('getSetting', getSettingHandler);
+    global.ipcRenderer.addListener('validatePassword', validatePasswordHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('getSetting', getSettingHandler);
+      global.ipcRenderer.removeListener('validatePassword', validatePasswordHandler);
     };
   }, []);
 
@@ -53,21 +54,15 @@ const PasswordModal = ({
 
   const onClickSave = () => {
     setAttemptPassword(true);
-    global.ipcRenderer.send('getSetting', {
+    global.ipcRenderer.send('validatePassword', {
       password,
     });
   };
 
   const onClickResetPassword = () => {
-    setShowResetPasswordModal(true);
-  };
-
-  const onCloseResetPassword = (isResetPassword: boolean) => {
-    if (isResetPassword) {
-      onClose(true);
-      clear();
-    }
-    setShowResetPasswordModal(false);
+    setPasswordResetModalState({
+      isOpen: true,
+    });
   };
 
   function showSuccessToast () {
@@ -84,12 +79,11 @@ const PasswordModal = ({
     setShowPassword(false);
     setIncorrectPassword(false);
     setAttemptPassword(false);
-    setShowResetPasswordModal(false);
   }
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={() => {}}>
+      <Modal isOpen={passwordModalState.isOpen} onClose={() => {}}>
         <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
         <ModalContent>
           <ModalHeader>비밀번호 입력</ModalHeader>
@@ -132,12 +126,11 @@ const PasswordModal = ({
               disabled={password.length === 0}
               onClick={onClickSave}
             >
-              저장
+              로그인
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <ResetPasswordModal isOpen={isShowResetPasswordModal} onClose={onCloseResetPassword}/>
     </>
   );
 };

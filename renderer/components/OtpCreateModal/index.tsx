@@ -1,20 +1,12 @@
 import { useEffect, useState, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, Text, useToast,
-} from '@chakra-ui/react';
-import { Otp, } from '../../../electron-src/interfaces';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
+  Button, Input, Text, useToast, } from '@chakra-ui/react';
+import { CreateOtpRequest, CreateOtpResponse, Otp, OtpCreateModalState, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
+import { useRecoilState, useSetRecoilState, } from 'recoil';
+import { otpCreateModalStateAtom, otpListAtom, } from '../../store';
 
-interface Props {
-  isOpen?: boolean,
-  onClose?: () => void,
-}
-
-const OtpURLModal = ({
-  isOpen = false,
-  onClose = () => {},
-}: Props) => {
+const OtpCreateModal = () => {
 
   const [url, setUrl,] = useState<string>('');
   const [issuer, setIssuer,] = useState<string>('');
@@ -28,22 +20,24 @@ const OtpURLModal = ({
   const [disabledEditUser, setDisabledEditUser,] = useState<boolean>(true);
   const [disabledSaveButton, setDisabledSaveButton,] = useState<boolean>(true);
 
+  const [otpCreateModalState, setOtpCreateModalState,] = useRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+  const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
   const toast = useToast();
 
   useEffect(() => {
-    const setOtpHandler = (_event, args) => {
-      if (args.result) {
-        global.ipcRenderer.send('getOtpList', {
-          password: BrowserStorage.getPassword(),
+    const setOtpHandler = (_event, response: CreateOtpResponse) => {
+      if (response.error === null) {
+        setOtpCreateModalState({
+          isOpen: false,
         });
-        onClose();
+        setOtpList(response.otpList);
         clear();
       }
     };
-    global.ipcRenderer.addListener('setOtp', setOtpHandler);
+    global.ipcRenderer.addListener('createOtp', setOtpHandler);
 
     return () => {
-      global.ipcRenderer.removeListener('setOtp', setOtpHandler);
+      global.ipcRenderer.removeListener('createOtp', setOtpHandler);
     };
   }, []);
 
@@ -111,10 +105,11 @@ const OtpURLModal = ({
       issuerDescription,
       userDescription,
     };
-    global.ipcRenderer.send('setOtp', {
-      otp: otp,
+    const request: CreateOtpRequest = {
       password: BrowserStorage.getPassword(),
-    });
+      otp,
+    };
+    global.ipcRenderer.send('createOtp', request);
 
     toast({
       title: 'OTP 추가',
@@ -124,7 +119,9 @@ const OtpURLModal = ({
   };
 
   const onClickCancel = () => {
-    onClose();
+    setOtpCreateModalState({
+      isOpen: false,
+    });
     clear();
   };
 
@@ -139,7 +136,7 @@ const OtpURLModal = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}}>
+    <Modal isOpen={otpCreateModalState.isOpen} onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>
@@ -176,4 +173,4 @@ const OtpURLModal = ({
   );
 };
 
-export default OtpURLModal;
+export default OtpCreateModal;

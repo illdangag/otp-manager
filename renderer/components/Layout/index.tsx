@@ -1,77 +1,74 @@
-import React, { ReactNode, useEffect, useState, } from 'react';
+import React, { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
-import MainPasswordModal from '../MainPasswordModal';
-import { PasswordStatus, } from '../../../electron-src/interfaces';
+import PasswordSetModal from '../PasswordSetModal';
+import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse,
+} from '../../../electron-src/interfaces';
 import PasswordModal from '../PasswordModal';
 import { BrowserStorage, } from '../../utils';
 import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { AddIcon, SignOutIcon, } from '../../icons';
-import OtpURLModal from '../OtpURLModal';
+import OtpCreateModal from '../OtpCreateModal';
+import { useSetRecoilState, } from 'recoil';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom,
+} from '../../store';
+import PasswordResetModal from '../PasswordResetModal';
+import OtpUpdateModal from '../OtpUpdateModal';
+import OtpDeleteModal from '../OtpDeleteModal';
 
 type Props = {
   children: ReactNode
-  title?: string
+  title: string
 }
 
 const Layout = ({
   children,
-  title = 'This is the default title',
+  title,
 }: Props) => {
 
-  const [isOpenMainPasswordModal, setOpenMainPasswordModal,] = useState(false);
-  const [isOpenPasswordModal, setOpenPasswordModal,] = useState(false);
-  const [isOpenOtpURLModal, setIsOpenOtpModal,] = useState<boolean>(false);
+  const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
+  const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
+  const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
+  const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
 
   useEffect(() => {
-    const getSettingHandler = (_event, args) => {
-      const passwordStatus: PasswordStatus = args as PasswordStatus;
-      if (passwordStatus.type === 'NOT_SETTING') {
-        setOpenMainPasswordModal(true);
-      } else if (passwordStatus.type === 'INVALIDATE') {
-        setOpenPasswordModal(true);
-      }
-      global.ipcRenderer.send('getOtpList', {
-        password: BrowserStorage.getPassword(),
-      });
-    };
-    global.ipcRenderer.addListener('getSetting', getSettingHandler);
+    const validatePasswordHandler = (_event, response: ValidatePasswordResponse) => {
+      const passwordStatusType: PasswordStatusType = response.type;
+      setPasswordStatusType(passwordStatusType);
 
-    global.ipcRenderer.send('getSetting', {
+      if (passwordStatusType === 'NOT_SETTING') {
+        setPasswordSetModalState({
+          isOpen: true,
+        });
+      } else if (passwordStatusType === 'INVALIDATE') {
+        setPasswordModalState({
+          isOpen: true,
+        });
+      }
+    };
+    global.ipcRenderer.addListener('validatePassword', validatePasswordHandler);
+
+    global.ipcRenderer.send('validatePassword', {
       password: BrowserStorage.getPassword(),
     });
 
     return () => {
-      global.ipcRenderer.removeListener('getSetting', getSettingHandler);
+      global.ipcRenderer.removeListener('validatePassword', validatePasswordHandler);
     };
   }, []);
 
-  const onCloseMainPasswordModal = () => {
-    setOpenMainPasswordModal(false);
-  };
-
-  const onClosePasswordModal = (isResetPassword: boolean) => {
-    setOpenPasswordModal(false);
-    if (isResetPassword) {
-      global.ipcRenderer.send('getSetting', {
-        password: '',
-      });
-    }
-  };
-
-  const onClickAdd = () => {
-    setIsOpenOtpModal(true);
-  };
-
-  const onCloseOtpURLModal = () => {
-    setIsOpenOtpModal(false);
-  };
-
-  const onClickSignOut = () => {
-    BrowserStorage.clear();
-    global.ipcRenderer.send('getSetting', {
-      password: '',
+  const onClickCreateButton = () => {
+    setOtpCreateModalState({
+      isOpen: true,
     });
+  };
+
+  const onClickSignOutMenu = () => {
+    BrowserStorage.clear();
+    setPasswordModalState({
+      isOpen: true,
+    });
+    setPasswordStatusType('INVALIDATE');
   };
 
   return (
@@ -92,10 +89,10 @@ const Layout = ({
               variant='outline'
             />
             <MenuList>
-              <MenuItem icon={<AddIcon/>} onClick={onClickAdd}>
+              <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
                 OTP 추가
               </MenuItem>
-              <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOut}>
+              <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOutMenu}>
                 로그아웃
               </MenuItem>
             </MenuList>
@@ -105,9 +102,12 @@ const Layout = ({
       {children}
       <footer>
       </footer>
-      <MainPasswordModal isOpen={isOpenMainPasswordModal} onClose={onCloseMainPasswordModal}/>
-      <PasswordModal isOpen={isOpenPasswordModal} onClose={onClosePasswordModal}/>
-      <OtpURLModal isOpen={isOpenOtpURLModal} onClose={onCloseOtpURLModal}/>
+      <PasswordSetModal/>
+      <PasswordModal/>
+      <PasswordResetModal/>
+      <OtpCreateModal/>
+      <OtpUpdateModal/>
+      <OtpDeleteModal/>
     </div>
   );
 };

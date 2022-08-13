@@ -8,8 +8,17 @@ import log from 'electron-log';
 import { app, BrowserWindow, ipcMain, IpcMainEvent, } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
+import { v4, } from 'uuid';
 
-import { Otp, PasswordStatus, PasswordStatusType, } from './interfaces';
+import {
+  ClearRequest,
+  ClearResponse, CreateOtpRequest, CreateOtpResponse, GetOtpListRequest, GetOtpListResponse,
+  MainPasswordRequest,
+  MainPasswordResponse,
+  Otp,
+  PasswordStatusType, UpdateOtpRequest, UpdateOtpResponse,
+  ValidatePasswordRequest, ValidatePasswordResponse,
+} from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 
 const store = new Store();
@@ -39,57 +48,93 @@ app.on('ready', async () => {
     });
 
   void await mainWindow.loadURL(url);
-  log.debug('Application Start');
+  log.debug('[Application Start]');
 });
 
 // Quit the app once all windows are closed
 app.on('window-all-closed', () => {
   app.quit();
-  log.debug('Application End');
+  log.debug('[Application End]');
 });
 
-ipcMain.on('clear', (_event: IpcMainEvent, _args: any) => {
-  log.debug('clear application storage');
-  store.clear();
-});
+/**
+ * 메인 비밀번호 설정
+ * - 메인 비밀번호를 새로 설정하게 하면 이전 비밀번호로 암호화되어 등록 되어 있는 OTP 데이터들을 삭제
+ */
+ipcMain.on('setMainPassword', (event: IpcMainEvent, request: MainPasswordRequest) => {
+  const password: string = request.password;
 
-ipcMain.on('getSetting', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
-  const passwordStatus: PasswordStatus = {
-    type: validatePassword(password),
-  };
-  event.sender.send('getSetting', passwordStatus);
-});
-
-ipcMain.on('setMainPassword', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
+  // 설정할 비밀번호로 상수 문자열을 암호화 하여서 저장
+  // 비밀번호 검증은 암호화된 상수 문자열을 복호화에 성공 하면 유효한 비밀번호라 판단
   const encryptedPassword: string = encrypt(PASSWORD_VALIDATE, password);
   store.set('encryptedPassword', encryptedPassword);
   store.delete('opts');
-  event.sender.send('setMainPassword', {
-    result: true,
-  });
+
+  // 비밀번호 설정 여부 반환
+  const response: MainPasswordResponse = {
+    error: null, // 비밀번호를 새로 설정하는 경우에는 오류의 상황이 존재하지 않음
+  };
+  const callbackChannel: string = request.callbackChannel || 'setMainPassword';
+  event.sender.send(callbackChannel, response);
 });
 
-ipcMain.on('setOtp', (event: IpcMainEvent, args: any) => {
-  const otp: Otp = args.otp;
-  const password: string = args.password;
-
-  otp.id = uuidv4();
-  otp.secret = encrypt(otp.secret, password);
-
-  const otpListData = store.get('otpList');
-  const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
-  otpList.push(otp);
-  store.set('otpList', otpList);
-  event.sender.send('setOtp', {
-    result: true,
-  });
+/**
+ * 비밀번호 검증
+ * - 상수 문자열을 확인해야 할 비밀번호로 복호화 시도 후, 정상적으로 복호화가 되는 경우 유효한 비밀번호로 판단
+ */
+ipcMain.on('validatePassword', (event: IpcMainEvent, request: ValidatePasswordRequest) => {
+  const password: string = request.password;
+  const response: ValidatePasswordResponse = {
+    error: null,
+    type: validatePassword(password),
+  };
+  const callbackChannel: string = request.callbackChannel || 'validatePassword';
+  event.sender.send(callbackChannel, response);
 });
 
-ipcMain.on('getOtpList', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
-  event.sender.send('getOtpList', getOtpList(password));
+/**
+ * 비밀번호 및 OTP 데이터 삭제
+ * - 사용자가 비밀번호를 잊어버린 상황에서 사용하는 경우를 고려하여 비밀번호 검증을 하지 않고 데이터를 삭제
+ */
+ipcMain.on('clear', (event: IpcMainEvent, request: ClearRequest) => {
+  log.debug('[clear]');
+  store.clear();
+  const response: ClearResponse = {
+    error: null,
+  };
+  const callbackChannel: string = request.callbackChannel || 'clear';
+  event.sender.send(callbackChannel, response);
+});
+
+/**
+ * OTP 추가
+ */
+ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
+  log.debug('[createOtp]');
+  const password: string = request.password; // TODO 비밀번호 검증
+  const otp: Otp = request.otp;
+
+  const newOtpList: Otp[] = pushOtpList(password, otp, true);
+  const response: CreateOtpResponse = {
+    error: null,
+    otpList: newOtpList,
+  };
+  const callbackChannel: string = request.callbackChannel || 'createOtp';
+  event.sender.send(callbackChannel, response);
+});
+
+/**
+ * OTP 목록 조회
+ */
+ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
+  log.debug('[getOtpList]');
+  const password: string = request.password; // TODO 비밀번호 검증
+  const response: GetOtpListResponse = {
+    error: null,
+    otpList: getOtpList(password, true),
+  };
+  const callbackChannel: string = request.callbackChannel || 'getOtpList';
+  event.sender.send(callbackChannel, response);
 });
 
 ipcMain.on('getOtp', (event: IpcMainEvent, args: any) => {
@@ -107,23 +152,26 @@ ipcMain.on('getOtp', (event: IpcMainEvent, args: any) => {
   });
 });
 
-ipcMain.on('updateOtp', (event: IpcMainEvent, args: any) => {
-  const password: string = args.password;
-  const passwordStatusType: PasswordStatusType = validatePassword(password);
-  if (passwordStatusType !== 'VALIDATE') {
-    event.sender.send('getSetting', passwordStatusType);
-    return;
-  }
+/**
+ * OTP 정보 갱신
+ */
+ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
+  log.debug('[updateOtp]', request);
+  const password: string = request.password; // TODO 비밀번호 검증
+  const newOtp: Otp = request.otp;
 
-  const newOtp: Otp = args.otp as Otp;
   const otpList: Otp[] = getOtpList(password, false);
   const index: number = otpList.findIndex(item => item.id === newOtp.id!);
   otpList[index].issuerDescription = newOtp.issuerDescription;
   otpList[index].userDescription = newOtp.userDescription;
   store.set('otpList', otpList);
-  event.sender.send('updateOtp', {
+
+  const response: UpdateOtpResponse = {
     error: null,
-  });
+    otpList: getOtpList(password, true),
+  };
+  const callbackChannel: string = request.callbackChannel || 'updateOtp';
+  event.sender.send(callbackChannel, response);
 });
 
 ipcMain.on('deleteOtp', (event: IpcMainEvent, args: any) => {
@@ -141,6 +189,17 @@ ipcMain.on('deleteOtp', (event: IpcMainEvent, args: any) => {
 });
 
 /////////////////////////////////
+
+const pushOtpList = (password: string, otp: Otp, isDecrypt: boolean = true): Otp[] => {
+  otp.id = v4();
+  otp.secret = encrypt(otp.secret, password);
+  const otpListData = store.get('otpList');
+  const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
+  otpList.push(otp);
+  store.set('otpList', otpList);
+
+  return getOtpList(password, isDecrypt);
+};
 
 const getOtpList = (password: string, isDecrypt: boolean = true): Otp[] => {
   const otpListData = store.get('otpList');
@@ -184,12 +243,4 @@ const validatePassword = (password: string): PasswordStatusType => {
   }
   log.debug(passwordStatusType);
   return passwordStatusType;
-};
-
-// TODO utils로 이동
-const uuidv4 = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
 };
