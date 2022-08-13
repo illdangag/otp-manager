@@ -37,10 +37,10 @@ export interface MainPasswordResponse extends IpcResponse {
 }
 
 export interface ValidatePasswordRequest extends IpcRequest {
-
 }
 export interface ValidatePasswordResponse extends IpcResponse {
   type: PasswordStatusType,
+  otpList: Otp[],
 }
 
 export interface ClearRequest extends IpcRequest {

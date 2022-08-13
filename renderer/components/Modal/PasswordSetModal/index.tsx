@@ -1,10 +1,13 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, InputGroup, InputRightElement, VStack, Text, } from '@chakra-ui/react';
-import { BrowserStorage, } from '../../utils';
-import { MainPasswordResponse, PasswordSetModalState, PasswordStatusType, } from '../../../electron-src/interfaces';
+import {
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, InputGroup, InputRightElement, VStack, Text,
+} from '@chakra-ui/react';
+
 import { useSetRecoilState, useRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, passwordSetModalStateAtom, } from '../../store';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, } from '../../../store';
+
+import { BrowserStorage, } from '../../../utils';
+import { MainPasswordResponse, PasswordSetModalState, PasswordStatusType, } from '../../../../electron-src/interfaces';
 
 const PasswordSetModal = () => {
 
@@ -70,7 +73,7 @@ const PasswordSetModal = () => {
   }
 
   return (
-    <Modal isOpen={passwordSetModalState.isOpen} size='sm' onClose={() => {}} >
+    <Modal isOpen={passwordSetModalState.isOpen} size='sm' onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>초기 비밀번호 설정</ModalHeader>

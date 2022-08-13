@@ -1,10 +1,11 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
-  ModalFooter, Button, Input, Text, } from '@chakra-ui/react';
-import { BrowserStorage, } from '../../utils';
-import { Otp, OtpUpdateModalState, UpdateOtpResponse, } from '../../../electron-src/interfaces';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, } from '@chakra-ui/react';
+
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { otpUpdateModalStateAtom, otpListAtom, } from '../../store';
+import { otpUpdateModalStateAtom, otpListAtom, } from '../../../store';
+
+import { BrowserStorage, } from '../../../utils';
+import { Otp, OtpUpdateModalState, UpdateOtpResponse, } from '../../../../electron-src/interfaces';
 
 const OtpUpdateModal = () => {
 
@@ -20,8 +21,7 @@ const OtpUpdateModal = () => {
     const updateOtpHandler = (_event, response: UpdateOtpResponse) => {
       if (response.error === null) {
         setOtpUpdateModalState({
-          isOpen: false,
-          otp: null,
+          isOpen: false, otp: null,
         });
         setOtpList(response.otpList);
       }
@@ -55,24 +55,20 @@ const OtpUpdateModal = () => {
 
   const onClickCancelButton = () => {
     setOtpUpdateModalState({
-      isOpen: false,
-      otp: null,
+      isOpen: false, otp: null,
     });
   };
 
   const onClickSaveButton = () => {
     global.ipcRenderer.send('updateOtp', {
-      password: BrowserStorage.getPassword(),
-      otp: {
-        id: otp.id,
-        issuerDescription,
-        userDescription,
+      password: BrowserStorage.getPassword(), otp: {
+        id: otp.id, issuerDescription, userDescription,
       } as Otp,
     });
   };
 
   return (
-    <Modal isOpen={otpUpdateModalState.isOpen} size='sm' onClose={() => {}} >
+    <Modal isOpen={otpUpdateModalState.isOpen} size='sm' onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 수정</ModalHeader>
@@ -97,8 +93,7 @@ const OtpUpdateModal = () => {
           <Button colorScheme='blue' disabled={otpUpdateModalState.otp === null} onClick={onClickSaveButton}>저장</Button>
         </ModalFooter>
       </ModalContent>
-    </Modal>
-  );
+    </Modal>);
 };
 
 export default OtpUpdateModal;

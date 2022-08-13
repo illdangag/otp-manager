@@ -97,6 +97,7 @@ ipcMain.on('validatePassword', (event: IpcMainEvent, request: ValidatePasswordRe
   const response: ValidatePasswordResponse = {
     error: null,
     type: validatePassword(password),
+    otpList: getOtpList(password, true),
   };
   const callbackChannel: string = request.callbackChannel || 'validatePassword';
   event.sender.send(callbackChannel, response);
@@ -137,7 +138,7 @@ ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
  * OTP 목록 조회
  */
 ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
-  log.debug('[getOtpList]');
+  log.debug('[getOtpList]', request);
   const password: string = request.password; // TODO 비밀번호 검증
   const response: GetOtpListResponse = {
     error: null,

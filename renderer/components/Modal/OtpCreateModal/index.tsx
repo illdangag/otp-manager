@@ -1,9 +1,13 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast, } from '@chakra-ui/react';
-import { CreateOtpRequest, CreateOtpResponse, Otp, OtpCreateModalState, } from '../../../electron-src/interfaces';
-import { BrowserStorage, } from '../../utils';
+import {
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast,
+} from '@chakra-ui/react';
+
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { otpCreateModalStateAtom, otpListAtom, } from '../../store';
+import { otpCreateModalStateAtom, otpListAtom, } from '../../../store';
+
+import { CreateOtpRequest, CreateOtpResponse, Otp, OtpCreateModalState, } from '../../../../electron-src/interfaces';
+import { BrowserStorage, } from '../../../utils';
 
 const OtpCreateModal = () => {
 
@@ -98,22 +102,15 @@ const OtpCreateModal = () => {
 
   const onClickSave = () => {
     const otp: Otp = {
-      issuer,
-      user,
-      secret,
-      issuerDescription,
-      userDescription,
+      issuer, user, secret, issuerDescription, userDescription,
     };
     const request: CreateOtpRequest = {
-      password: BrowserStorage.getPassword(),
-      otp,
+      password: BrowserStorage.getPassword(), otp,
     };
     global.ipcRenderer.send('createOtp', request);
 
     toast({
-      title: 'OTP 추가',
-      position: 'top',
-      duration: 2000,
+      title: 'OTP 추가', position: 'top', duration: 2000,
     });
   };
 

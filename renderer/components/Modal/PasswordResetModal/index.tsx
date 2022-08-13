@@ -1,11 +1,15 @@
 import { useEffect, } from 'react';
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
-  Text, } from '@chakra-ui/react';
-import { BrowserStorage, } from '../../utils';
+import {
+  Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text,
+} from '@chakra-ui/react';
+
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { passwordResetModalStateAtom, passwordModalStateAtom, passwordSetModalStateAtom, } from '../../store';
-import { ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState,
-} from '../../../electron-src/interfaces';
+import { passwordResetModalStateAtom, passwordModalStateAtom, passwordSetModalStateAtom, } from '../../../store';
+
+import {
+  ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState,
+} from '../../../../electron-src/interfaces';
+import { BrowserStorage, } from '../../../utils';
 
 const PasswordResetModal = () => {
 
@@ -46,7 +50,7 @@ const PasswordResetModal = () => {
   };
 
   return (
-    <Modal isOpen={passwordResetModalState.isOpen} size='sm' onClose={() => {}} >
+    <Modal isOpen={passwordResetModalState.isOpen} size='sm' onClose={() => {}}>
       <ModalOverlay
         bg='none'
         backdropFilter='auto'

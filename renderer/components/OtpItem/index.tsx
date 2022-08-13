@@ -1,14 +1,5 @@
 import {
-  Box,
-  CircularProgress,
-  Text,
-  Button,
-  HStack,
-  useToast,
-  IconButton,
-  Spacer,
-  VStack,
-  Divider,
+  Box, CircularProgress, Text, Button, HStack, useToast, IconButton, Spacer, VStack, Divider,
 } from '@chakra-ui/react';
 import { OtpCode, OtpDeleteModalState, OtpUpdateModalState, } from '../../../electron-src/interfaces';
 import { CopyIcon, EditIcon, } from '../../icons';
@@ -34,23 +25,19 @@ const OtpItem = ({
 
   function showCopyToast () {
     toast({
-      title: `${otpCode.code} 복사`,
-      position: 'top',
-      duration: 2000,
+      title: `${otpCode.code} 복사`, position: 'top', duration: 2000,
     });
   }
 
   const onClickEditButton = () => {
     setOtpUpdateModalState({
-      isOpen: true,
-      otp: otpCode.otp,
+      isOpen: true, otp: otpCode.otp,
     });
   };
 
   const onClickDeleteButton = () => {
     setOtpDeleteModalState({
-      isOpen: true,
-      otp: otpCode.otp,
+      isOpen: true, otp: otpCode.otp,
     });
   };
 
@@ -59,8 +46,12 @@ const OtpItem = ({
       <Box padding='.8rem' borderWidth='1px' borderRadius='1rem'>
         <HStack>
           <VStack spacing={0}>
-            <Text width='100%' fontSize='lg' color='gray.700'>{otpCode.otp.issuerDescription ? otpCode.otp.issuerDescription : otpCode.otp.issuer}</Text>
-            <Text width='100%' fontSize='sm' color='gray.700'>{otpCode.otp.userDescription ? otpCode.otp.userDescription : otpCode.otp.user}</Text>
+            <Text width='100%' fontSize='lg' color='gray.700'>
+              {otpCode.otp.issuerDescription ? otpCode.otp.issuerDescription : otpCode.otp.issuer}
+            </Text>
+            <Text width='100%' fontSize='sm' color='gray.700'>
+              {otpCode.otp.userDescription ? otpCode.otp.userDescription : otpCode.otp.user}
+            </Text>
           </VStack>
           <Spacer/>
           <IconButton aria-label='Edit OTP' variant='outline' size='sm' icon={<EditIcon/>} onClick={onClickEditButton}/>

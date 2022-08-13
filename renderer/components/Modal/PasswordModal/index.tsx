@@ -1,15 +1,15 @@
 import { useEffect, useState, } from 'react';
-import { Button, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter,
-  ModalHeader, ModalOverlay, Text, useToast, VStack, } from '@chakra-ui/react';
 import {
-  PasswordModalState,
-  PasswordResetModalState,
-  PasswordStatusType,
-  ValidatePasswordResponse,
-} from '../../../electron-src/interfaces';
-import { BrowserStorage, } from '../../utils';
+  Button, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast, VStack,
+} from '@chakra-ui/react';
+
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { passwordModalStateAtom, passwordResetModalStateAtom, } from '../../store';
+import { passwordModalStateAtom, passwordResetModalStateAtom, otpListAtom, } from '../../../store';
+
+import {
+  Otp, PasswordModalState, PasswordResetModalState, PasswordStatusType, ValidatePasswordRequest, ValidatePasswordResponse,
+} from '../../../../electron-src/interfaces';
+import { BrowserStorage, } from '../../../utils';
 
 const PasswordModal = () => {
   const [password, setPassword,] = useState<string>('');
@@ -19,6 +19,7 @@ const PasswordModal = () => {
 
   const [passwordModalState, setPasswordModalState,] = useRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setPasswordResetModalState = useSetRecoilState<PasswordResetModalState>(passwordResetModalStateAtom);
+  const setOptList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const toast = useToast();
 
@@ -29,6 +30,7 @@ const PasswordModal = () => {
         setPasswordModalState({
           isOpen: false,
         });
+        setOptList(response.otpList);
         showSuccessToast();
         clear();
       } else {
@@ -56,7 +58,7 @@ const PasswordModal = () => {
     setAttemptPassword(true);
     global.ipcRenderer.send('validatePassword', {
       password,
-    });
+    } as ValidatePasswordRequest);
   };
 
   const onClickResetPassword = () => {
@@ -67,10 +69,7 @@ const PasswordModal = () => {
 
   function showSuccessToast () {
     toast({
-      title: '로그인 성공',
-      status: 'success',
-      duration: 2500,
-      position: 'top',
+      title: '로그인 성공', status: 'success', duration: 2500, position: 'top',
     });
   }
 

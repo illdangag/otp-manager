@@ -1,7 +1,9 @@
 import { Box, Button, Center, Container, Text, VStack, } from '@chakra-ui/react';
 import { OtpListIcon, } from '../../icons';
+
 import { useSetRecoilState, } from 'recoil';
 import { otpCreateModalStateAtom, } from '../../store';
+
 import { OtpCreateModalState, } from '../../../electron-src/interfaces';
 
 const OtpEmpty = () => {

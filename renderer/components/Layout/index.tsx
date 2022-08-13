@@ -1,18 +1,15 @@
 import React, { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
-import PasswordSetModal from '../PasswordSetModal';
-import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
-import PasswordModal from '../PasswordModal';
-import { BrowserStorage, } from '../../utils';
 import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
+import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
 import { AddIcon, SignOutIcon, } from '../../icons';
-import OtpCreateModal from '../OtpCreateModal';
+
 import { useSetRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
-import PasswordResetModal from '../PasswordResetModal';
-import OtpUpdateModal from '../OtpUpdateModal';
-import OtpDeleteModal from '../OtpDeleteModal';
+
+import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
+import { BrowserStorage, } from '../../utils';
 
 type Props = {
   children: ReactNode
@@ -71,9 +68,9 @@ const Layout = ({
   const menuElement = <Menu>
     <MenuButton
       as={IconButton}
-      aria-label="Options"
+      aria-label='Options'
       icon={<HamburgerIcon/>}
-      variant="outline"
+      variant='outline'
     />
     <MenuList>
       <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
@@ -85,46 +82,48 @@ const Layout = ({
     </MenuList>
   </Menu>;
 
-  return (<>
-    <Head>
-      <title>{title}</title>
-      <meta charSet="utf-8"/>
-      <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
-    </Head>
-    <Flex
-      flexDirection="column"
-      height="100vh"
-    >
-      <Center
-        as="header"
-        position="relative"
-        paddingLeft=".4rem"
-        paddingRight=".4rem"
-        paddingTop=".8rem"
-        paddingBottom=".8rem"
-        borderBottomWidth="1px"
-        borderBottomColor="gray.200"
-        // height='4rem'
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta charSet='utf-8'/>
+        <meta name='viewport' content='initial-scale=1.0, width=device-width'/>
+      </Head>
+      <Flex
+        flexDirection='column'
+        height='100vh'
       >
-        <Text fontSize="lg" fontWeight={600}>OTP Manager</Text>
-        <Container position="absolute" right={0} width="auto">
-          {menuElement}
-        </Container>
-      </Center>
-      <VStack overflow="auto">
-        <Container padding={0}>
-          {children}
-        </Container>
-        <Spacer/>
-      </VStack>
-    </Flex>
-    <PasswordSetModal/>
-    <PasswordModal/>
-    <PasswordResetModal/>
-    <OtpCreateModal/>
-    <OtpUpdateModal/>
-    <OtpDeleteModal/>
-  </>);
+        <Center
+          as='header'
+          position='relative'
+          paddingLeft='.4rem'
+          paddingRight='.4rem'
+          paddingTop='.8rem'
+          paddingBottom='.8rem'
+          borderBottomWidth='1px'
+          borderBottomColor='gray.200'
+          // height='4rem'
+        >
+          <Text fontSize='lg' fontWeight={600}>OTP Manager</Text>
+          <Container position='absolute' right={0} width='auto'>
+            {menuElement}
+          </Container>
+        </Center>
+        <VStack overflow='auto'>
+          <Container padding={0}>
+            {children}
+          </Container>
+          <Spacer/>
+        </VStack>
+      </Flex>
+      <PasswordSetModal/>
+      <PasswordModal/>
+      <PasswordResetModal/>
+      <OtpCreateModal/>
+      <OtpUpdateModal/>
+      <OtpDeleteModal/>
+    </>
+  );
 };
 
 export default Layout;
