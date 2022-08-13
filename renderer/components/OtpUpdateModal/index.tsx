@@ -72,7 +72,7 @@ const OtpUpdateModal = () => {
   };
 
   return (
-    <Modal isOpen={otpUpdateModalState.isOpen} onClose={() => {}} >
+    <Modal isOpen={otpUpdateModalState.isOpen} size='sm' onClose={() => {}} >
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 수정</ModalHeader>

@@ -1,17 +1,15 @@
 import React, { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
 import PasswordSetModal from '../PasswordSetModal';
-import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse,
-} from '../../../electron-src/interfaces';
+import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
 import PasswordModal from '../PasswordModal';
 import { BrowserStorage, } from '../../utils';
-import { HStack, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, } from '@chakra-ui/react';
+import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { AddIcon, SignOutIcon, } from '../../icons';
 import OtpCreateModal from '../OtpCreateModal';
 import { useSetRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom,
-} from '../../store';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
 import PasswordResetModal from '../PasswordResetModal';
 import OtpUpdateModal from '../OtpUpdateModal';
 import OtpDeleteModal from '../OtpDeleteModal';
@@ -22,8 +20,7 @@ type Props = {
 }
 
 const Layout = ({
-  children,
-  title,
+  children, title,
 }: Props) => {
 
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
@@ -71,45 +68,63 @@ const Layout = ({
     setPasswordStatusType('INVALIDATE');
   };
 
-  return (
-    <div>
-      <Head>
-        <title>{title}</title>
-        <meta charSet='utf-8' />
-        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-      </Head>
-      <header>
-        <HStack padding='.4rem'>
-          <Spacer/>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label='Options'
-              icon={<HamburgerIcon />}
-              variant='outline'
-            />
-            <MenuList>
-              <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
-                OTP 추가
-              </MenuItem>
-              <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOutMenu}>
-                로그아웃
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </HStack>
-      </header>
-      {children}
-      <footer>
-      </footer>
-      <PasswordSetModal/>
-      <PasswordModal/>
-      <PasswordResetModal/>
-      <OtpCreateModal/>
-      <OtpUpdateModal/>
-      <OtpDeleteModal/>
-    </div>
-  );
+  const menuElement = <Menu>
+    <MenuButton
+      as={IconButton}
+      aria-label="Options"
+      icon={<HamburgerIcon/>}
+      variant="outline"
+    />
+    <MenuList>
+      <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
+        OTP 추가
+      </MenuItem>
+      <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOutMenu}>
+        로그아웃
+      </MenuItem>
+    </MenuList>
+  </Menu>;
+
+  return (<>
+    <Head>
+      <title>{title}</title>
+      <meta charSet="utf-8"/>
+      <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    </Head>
+    <Flex
+      flexDirection="column"
+      height="100vh"
+    >
+      <Center
+        as="header"
+        position="relative"
+        paddingLeft=".4rem"
+        paddingRight=".4rem"
+        paddingTop=".8rem"
+        paddingBottom=".8rem"
+        borderBottomWidth="1px"
+        borderBottomColor="gray.200"
+        // height='4rem'
+      >
+        <Text fontSize="lg" fontWeight={600}>OTP Manager</Text>
+        <Container position="absolute" right={0} width="auto">
+          {menuElement}
+        </Container>
+      </Center>
+      <VStack overflow="auto">
+        <Container padding={0}>
+          {children}
+        </Container>
+        <Spacer/>
+      </VStack>
+    </Flex>
+    <PasswordSetModal/>
+    <PasswordModal/>
+    <PasswordResetModal/>
+    <OtpCreateModal/>
+    <OtpUpdateModal/>
+    <OtpDeleteModal/>
+  </>);
 };
 
 export default Layout;

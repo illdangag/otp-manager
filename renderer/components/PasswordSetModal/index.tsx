@@ -70,7 +70,7 @@ const PasswordSetModal = () => {
   }
 
   return (
-    <Modal isOpen={passwordSetModalState.isOpen} onClose={() => {}} >
+    <Modal isOpen={passwordSetModalState.isOpen} size='sm' onClose={() => {}} >
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>초기 비밀번호 설정</ModalHeader>

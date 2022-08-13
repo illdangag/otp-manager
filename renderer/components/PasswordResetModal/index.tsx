@@ -46,7 +46,7 @@ const PasswordResetModal = () => {
   };
 
   return (
-    <Modal isOpen={passwordResetModalState.isOpen} onClose={() => {}} >
+    <Modal isOpen={passwordResetModalState.isOpen} size='sm' onClose={() => {}} >
       <ModalOverlay
         bg='none'
         backdropFilter='auto'

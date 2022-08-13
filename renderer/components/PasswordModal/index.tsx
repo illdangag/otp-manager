@@ -83,7 +83,7 @@ const PasswordModal = () => {
 
   return (
     <>
-      <Modal isOpen={passwordModalState.isOpen} onClose={() => {}}>
+      <Modal isOpen={passwordModalState.isOpen} size='sm' onClose={() => {}}>
         <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
         <ModalContent>
           <ModalHeader>비밀번호 입력</ModalHeader>

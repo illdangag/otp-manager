@@ -1,6 +1,5 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, Text, useToast, } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast, } from '@chakra-ui/react';
 import { CreateOtpRequest, CreateOtpResponse, Otp, OtpCreateModalState, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 import { useRecoilState, useSetRecoilState, } from 'recoil';
@@ -136,7 +135,7 @@ const OtpCreateModal = () => {
   }
 
   return (
-    <Modal isOpen={otpCreateModalState.isOpen} onClose={() => {}}>
+    <Modal isOpen={otpCreateModalState.isOpen} size='sm' onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>

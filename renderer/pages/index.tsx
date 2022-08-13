@@ -68,11 +68,11 @@ const IndexPage = () => {
 
   return (
     <Layout title={passwordStatusType}>
-      <VStack>
+      <VStack padding='.8rem'>
         {passwordStatusType}
         {otpCodeList.length === 0 && <OtpEmpty/>}
         {otpCodeList.map((item, index) => (
-          <Container key={index}>
+          <Container key={index} padding='0'>
             <OtpItem otpCode={item}/>
           </Container>
         ))}
