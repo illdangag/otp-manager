@@ -10,15 +10,17 @@ import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import { v4, } from 'uuid';
 
-import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse, GetOtpListRequest,
-  GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest, UpdateOtpResponse,
-  ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
+import { AutoUpdaterInfo, ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse,
+  GetOtpListRequest, GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest,
+  UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
 import { autoUpdater, } from 'electron-updater';
 
 const store = new Store();
 
 const PASSWORD_VALIDATE: string = 'passwordValidate';
+
+let webContents: Electron.WebContents | null = null;
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -34,6 +36,7 @@ app.on('ready', async () => {
       preload: join(__dirname, 'preload.js'),
     },
   });
+  webContents = mainWindow.webContents;
 
   const url = isDev
     ? 'http://localhost:8000/'
@@ -95,7 +98,7 @@ ipcMain.on('validatePassword', (event: IpcMainEvent, request: ValidatePasswordRe
  * - 사용자가 비밀번호를 잊어버린 상황에서 사용하는 경우를 고려하여 비밀번호 검증을 하지 않고 데이터를 삭제
  */
 ipcMain.on('clear', (event: IpcMainEvent, request: ClearRequest) => {
-  log.debug('[clear]', request);
+  log.debug('[clear]');
   store.clear();
   const response: ClearResponse = {
     error: null,
@@ -108,7 +111,7 @@ ipcMain.on('clear', (event: IpcMainEvent, request: ClearRequest) => {
  * OTP 추가
  */
 ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
-  log.debug('[createOtp]', request);
+  log.debug('[createOtp]');
   const password: string = request.password; // TODO 비밀번호 검증
   const otp: Otp = request.otp;
   otpTrim(otp);
@@ -126,7 +129,7 @@ ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
  * OTP 목록 조회
  */
 ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
-  log.debug('[getOtpList]', request);
+  log.debug('[getOtpList]');
   const password: string = request.password; // TODO 비밀번호 검증
   const response: GetOtpListResponse = {
     error: null,
@@ -140,7 +143,7 @@ ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
  * OTP 갱신
  */
 ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
-  log.debug('[updateOtp]', request);
+  log.debug('[updateOtp]');
   const password: string = request.password; // TODO 비밀번호 검증
   const updateOtp: Otp = request.otp;
   otpTrim(updateOtp);
@@ -164,7 +167,7 @@ ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
  * OTP 삭제
  */
 ipcMain.on('deleteOtp', (event: IpcMainEvent, request: DeleteOtpRequest) => {
-  log.debug('[deleteOtp]', request);
+  log.debug('[deleteOtp]');
   const password: string = request.password; // TODO 비밀번호 검증
 
   const deleteOtpId: string = request.id;
@@ -233,23 +236,53 @@ const otpTrim = (otp: Otp): void => {
 
 // updater
 autoUpdater.on('checking-for-update', () => {
-  log.debug('checking for update...');
+  log.info('checking for update...');
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'checking-for-update',
+    message: '',
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
 });
 autoUpdater.on('update-available', () => {
   log.info('update available');
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'update-available',
+    message: '',
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
 });
 autoUpdater.on('update-not-available', () => {
   log.info('update not available');
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'update-not-available',
+    message: '',
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
 });
 autoUpdater.on('error', (err) => {
   log.info('error: ' + err);
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'error',
+    message: err.message,
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
 });
 autoUpdater.on('download-progress', (progressObj) => {
   let log_message = "download speed: " + progressObj.bytesPerSecond;
   log_message = log_message + ' - current ' + progressObj.percent + '%';
   log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
   log.info(log_message);
-})
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'download-progress',
+    message: `${progressObj.percent}`,
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
+});
 autoUpdater.on('update-downloaded', () => {
   log.info('update downloaded');
+  const autoUpdaterInfo: AutoUpdaterInfo = {
+    status: 'update-downloaded',
+    message: '',
+  };
+  webContents?.send('autoUpdater', autoUpdaterInfo);
 });

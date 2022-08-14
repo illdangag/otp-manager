@@ -1,6 +1,8 @@
-import React, { ReactNode, useEffect, } from 'react';
+import { ReactNode, useEffect, useState, } from 'react';
 import Head from 'next/head';
-import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, } from '@chakra-ui/react';
+import {
+  Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, useToast, HStack,
+} from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
 import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons';
@@ -8,7 +10,7 @@ import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons'
 import { useSetRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
 
-import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
+import { AutoUpdaterInfo, OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 
 type Props = {
@@ -20,11 +22,14 @@ const Layout = ({
   children, title,
 }: Props) => {
 
+  const [footerMessage, setFooterMessage,] = useState<string>('');
+
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
 
+  const toast = useToast();
   const { colorMode, toggleColorMode, } = useColorMode();
 
   useEffect(() => {
@@ -55,6 +60,29 @@ const Layout = ({
       });
     }
 
+    const autoUpdaterHandler = (_event, response: AutoUpdaterInfo) => {
+      console.debug(response);
+      switch (response.status) {
+        case 'update-downloaded':
+          toast({
+            title: 'OTP Manager가 업데이트 되었습니다. 다시 시작 해주시기 바랍니다.', position: 'top', isClosable: true, duration: 999999,
+          });
+          break;
+        case 'checking-for-update':
+          setFooterMessage('업데이트 확인중...');
+          break;
+        case 'update-not-available':
+          setFooterMessage('최신 버전');
+          break;
+        case 'download-progress':
+          setFooterMessage(`업데이트 진행중 (${response.message})...`);
+          break;
+        default:
+          break;
+      }
+    };
+    global.ipcRenderer.on('autoUpdater', autoUpdaterHandler);
+
     return () => {
       global.ipcRenderer.removeListener('validatePassword', validatePasswordHandler);
     };
@@ -80,9 +108,9 @@ const Layout = ({
 
   const displayModeElement = (): ReactNode => {
     if (colorMode === 'dark') {
-      return (<MenuItem icon={<LightModeIcon/>} onClick={onClickDisplayMode}>라이트모드</MenuItem>);
+      return (<MenuItem icon={<LightModeIcon/>} onClick={onClickDisplayMode}>라이트 모드</MenuItem>);
     } else {
-      return (<MenuItem icon={<DarkModeIcon/>} onClick={onClickDisplayMode}>다크모드</MenuItem>);
+      return (<MenuItem icon={<DarkModeIcon/>} onClick={onClickDisplayMode}>다크 모드</MenuItem>);
     }
   };
 
@@ -138,9 +166,8 @@ const Layout = ({
           <Spacer/>
         </VStack>
         <Spacer/>
-        <Flex
+        <HStack
           as='footer'
-          justifyContent='flex-end'
           paddingLeft='.4rem'
           paddingRight='.4rem'
           paddingTop='.2rem'
@@ -148,8 +175,10 @@ const Layout = ({
           borderTopWidth='1px'
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
+          <Text fontSize='xs'>{footerMessage}</Text>
+          <Spacer/>
           <Text fontSize='xs'>v0.0.2</Text>
-        </Flex>
+        </HStack>
       </Flex>
       <PasswordSetModal/>
       <PasswordModal/>

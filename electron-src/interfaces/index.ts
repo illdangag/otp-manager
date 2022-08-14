@@ -31,10 +31,8 @@ interface IpcResponse {
 }
 
 export interface MainPasswordRequest extends IpcRequest {
-
 }
 export interface MainPasswordResponse extends IpcResponse {
-
 }
 
 export interface ValidatePasswordRequest extends IpcRequest {
@@ -45,10 +43,8 @@ export interface ValidatePasswordResponse extends IpcResponse {
 }
 
 export interface ClearRequest extends IpcRequest {
-
 }
 export interface ClearResponse extends IpcResponse {
-
 }
 
 export interface CreateOtpRequest extends IpcRequest {
@@ -59,7 +55,6 @@ export interface CreateOtpResponse extends IpcResponse {
 }
 
 export interface GetOtpListRequest extends IpcRequest {
-
 }
 export interface GetOtpListResponse extends IpcResponse {
   otpList: Otp[],
@@ -77,6 +72,11 @@ export interface DeleteOtpRequest extends IpcRequest {
 }
 export interface DeleteOtpResponse extends IpcResponse {
   otpList: Otp[],
+}
+
+export interface AutoUpdaterInfo {
+  status: string,
+  message: string,
 }
 
 // recoil state
