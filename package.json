@@ -1,6 +1,6 @@
 {
   "name": "otp-manager",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "main": "main/index.js",
   "productName": "otp-manager",

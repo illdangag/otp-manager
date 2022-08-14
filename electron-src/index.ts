@@ -268,9 +268,9 @@ autoUpdater.on('error', (err) => {
   webContents?.send('autoUpdater', autoUpdaterInfo);
 });
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "download speed: " + progressObj.bytesPerSecond;
+  let log_message = 'download speed: ' + progressObj.bytesPerSecond;
   log_message = log_message + ' - current ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
   log.info(log_message);
   const autoUpdaterInfo: AutoUpdaterInfo = {
     status: 'download-progress',
