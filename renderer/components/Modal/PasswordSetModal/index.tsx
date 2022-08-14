@@ -1,4 +1,4 @@
-import { useEffect, useState, } from 'react';
+import { useEffect, useState, useRef, } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, InputGroup, InputRightElement, VStack, Text,
 } from '@chakra-ui/react';
@@ -20,10 +20,12 @@ const PasswordSetModal = () => {
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
   const [passwordSetModalState, setPasswordSetModalState,] = useRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
 
+  const passwordInputElement = useRef<HTMLInputElement>(null);
+  const validateInputElement = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const setMainPasswordHandler = (_event, response: MainPasswordResponse) => {
       if (response.error === null) {
-        BrowserStorage.setPassword(password);
         setPasswordStatusType('VALIDATE');
         setPasswordSetModalState({
           isOpen: false,
@@ -38,27 +40,44 @@ const PasswordSetModal = () => {
     };
   }, []);
 
-  const onClickPasswordShow = () => {
+  const onClickPasswordShowButton = () => {
     setShowPassword(!isShowPassword);
   };
 
-  const onClickValidateShow = () => {
+  const onClickValidateShowButton = () => {
     setShowValidate(!isShowValidate);
   };
 
-  const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangePasswordInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = event.target.value;
     setPassword(value);
     setDisabledSaveButton(value === '' || validate === '' || value !== validate);
   };
 
-  const onChangeValidate = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeValidateInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = event.target.value;
     setValidate(value);
     setDisabledSaveButton(password === '' || value === '' || password !== value);
   };
 
-  const onClickSave = () => {
+  const onKeyUpPasswordInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && password.length > 0) {
+      validateInputElement.current.focus();
+    }
+  };
+
+  const onKeyUpValidateInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !disabledSaveButton) {
+      onClickSaveButton();
+    }
+  };
+
+  const onClickSaveButton = () => {
+    savePassword();
+  };
+
+  const savePassword = () => {
+    BrowserStorage.setPassword(password);
     global.ipcRenderer.send('setMainPassword', {
       password,
     });
@@ -85,10 +104,13 @@ const PasswordSetModal = () => {
                 type={isShowPassword ? 'text' : 'password'}
                 placeholder='비밀번호'
                 value={password}
-                onChange={onChangePassword}
+                onChange={onChangePasswordInput}
+                onKeyUp={onKeyUpPasswordInput}
+                ref={passwordInputElement}
+                tabIndex={1}
               />
               <InputRightElement width='4.5rem'>
-                <Button h='1.75rem' size='sm' onClick={onClickPasswordShow}>{isShowPassword ? '가리기' : '보이기'}</Button>
+                <Button h='1.75rem' size='sm' onClick={onClickPasswordShowButton}>{isShowPassword ? '가리기' : '보이기'}</Button>
               </InputRightElement>
             </InputGroup>
             <InputGroup size='md'>
@@ -97,10 +119,13 @@ const PasswordSetModal = () => {
                 type={isShowValidate ? 'text' : 'password'}
                 placeholder='확인'
                 value={validate}
-                onChange={onChangeValidate}
+                onChange={onChangeValidateInput}
+                onKeyUp={onKeyUpValidateInput}
+                ref={validateInputElement}
+                tabIndex={2}
               />
               <InputRightElement width='4.5rem'>
-                <Button h='1.75rem' size='sm' onClick={onClickValidateShow}>{isShowValidate ? '가리기' : '보이기'}</Button>
+                <Button h='1.75rem' size='sm' onClick={onClickValidateShowButton}>{isShowValidate ? '가리기' : '보이기'}</Button>
               </InputRightElement>
             </InputGroup>
           </VStack>
@@ -108,7 +133,7 @@ const PasswordSetModal = () => {
           <Text fontSize='small' color='gray.600'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' onClick={onClickSave} disabled={disabledSaveButton}>저장</Button>
+          <Button colorScheme='blue' onClick={onClickSaveButton} disabled={disabledSaveButton} tabIndex={3}>저장</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

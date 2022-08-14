@@ -121,7 +121,7 @@ ipcMain.on('clear', (event: IpcMainEvent, request: ClearRequest) => {
  * OTP 추가
  */
 ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
-  log.debug('[createOtp]');
+  log.debug('[createOtp]', request);
   const password: string = request.password; // TODO 비밀번호 검증
   const otp: Otp = request.otp;
   otpTrim(otp);
@@ -202,7 +202,6 @@ const pushOtpList = (password: string, otp: Otp, isDecrypt: boolean = true): Otp
   const otpList: Otp[] = otpListData ? otpListData as Otp[] : [];
   otpList.push(otp);
   store.set('otpList', otpList);
-
   return getOtpList(password, isDecrypt);
 };
 

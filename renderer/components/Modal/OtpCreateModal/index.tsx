@@ -152,6 +152,7 @@ const OtpCreateModal = () => {
             placeholder='OPT URL'
             value={url}
             onChange={onChangeUrl}
+            tabIndex={1}
           />
           <Text fontSize='sm' color='gray.600'>QR code URL을 복사하여 붙여넣으세요</Text>
           <Divider marginTop='.8rem' marginBottom='.8rem' borderColor='gray.300'/>
@@ -162,6 +163,7 @@ const OtpCreateModal = () => {
             value={issuerDescription}
             disabled={disabledEditIssuer}
             onChange={onChangeIssuerDescription}
+            tabIndex={2}
           />
           <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>User</Text>
           <Input
@@ -170,6 +172,7 @@ const OtpCreateModal = () => {
             value={userDescription}
             disabled={disabledEditUser}
             onChange={onChangeUserDescription}
+            tabIndex={3}
           />
           <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>설명</Text>
           <Textarea
@@ -177,11 +180,12 @@ const OtpCreateModal = () => {
             disabled={disabledDescription}
             value={description}
             onChange={onChangeDescription}
+            tabIndex={3}
           />
         </ModalBody>
         <ModalFooter>
           <Button marginRight={3} onClick={onClickCancel}>취소</Button>
-          <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSave}>저장</Button>
+          <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSave} tabIndex={4}>저장</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

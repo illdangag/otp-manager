@@ -4,10 +4,10 @@ import {
 } from '@chakra-ui/react';
 
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { passwordResetModalStateAtom, passwordModalStateAtom, passwordSetModalStateAtom, } from '../../../store';
+import { passwordResetModalStateAtom, passwordModalStateAtom, passwordSetModalStateAtom, otpListAtom, } from '../../../store';
 
 import {
-  ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState,
+  ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState, Otp,
 } from '../../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../../utils';
 
@@ -16,11 +16,13 @@ const PasswordResetModal = () => {
   const [passwordResetModalState, setPasswordResetModalState,] = useRecoilState<PasswordResetModalState>(passwordResetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
+  const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   useEffect(() => {
     const clearHandler = (_event, response: ClearResponse) => {
       if (response.error === null) {
         BrowserStorage.clear();
+        setOtpList([]);
         setPasswordResetModalState({
           isOpen: false,
         });

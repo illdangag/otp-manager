@@ -42,9 +42,16 @@ const Layout = ({
     };
     global.ipcRenderer.addListener('validatePassword', validatePasswordHandler);
 
-    global.ipcRenderer.send('validatePassword', {
-      password: BrowserStorage.getPassword(),
-    });
+    const password: string = BrowserStorage.getPassword();
+    if (password !== '') {
+      global.ipcRenderer.send('validatePassword', {
+        password,
+      });
+    } else {
+      setPasswordModalState({
+        isOpen: true,
+      });
+    }
 
     return () => {
       global.ipcRenderer.removeListener('validatePassword', validatePasswordHandler);

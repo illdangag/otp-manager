@@ -31,10 +31,17 @@ const PasswordModal = () => {
           isOpen: false,
         });
         setOptList(response.otpList);
-        showSuccessToast();
         clear();
+        toast({
+          title: '로그인 성공', status: 'success', duration: 2000, position: 'top',
+        });
       } else {
         setIncorrectPassword(true);
+        if (passwordStatusType === 'INVALIDATE') {
+          toast({
+            title: '로그인 실패', status: 'error', duration: 2000, position: 'top',
+          });
+        }
       }
     };
 
@@ -45,40 +52,45 @@ const PasswordModal = () => {
     };
   }, []);
 
-  const onClickShowPassword = () => {
+  const onClickShowPasswordButton = () => {
     setShowPassword(!isShowPassword);
   };
 
-  const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangePasswordInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-    BrowserStorage.setPassword(event.target.value);
   };
 
-  const onClickSave = () => {
-    setAttemptPassword(true);
-    global.ipcRenderer.send('validatePassword', {
-      password,
-    } as ValidatePasswordRequest);
+  const onKeyUpPasswordInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      validatePassword();
+    }
   };
 
-  const onClickResetPassword = () => {
+  const onClickSaveButton = () => {
+    validatePassword();
+  };
+
+  const onClickResetPasswordButton = () => {
     setPasswordResetModalState({
       isOpen: true,
     });
   };
 
-  function showSuccessToast () {
-    toast({
-      title: '로그인 성공', status: 'success', duration: 2500, position: 'top',
-    });
-  }
-
-  function clear () {
+  const clear = () => {
     setPassword('');
     setShowPassword(false);
     setIncorrectPassword(false);
     setAttemptPassword(false);
-  }
+  };
+
+  const validatePassword = () => {
+    setAttemptPassword(true);
+    BrowserStorage.setPassword(password);
+
+    global.ipcRenderer.send('validatePassword', {
+      password,
+    } as ValidatePasswordRequest);
+  };
 
   return (
     <>
@@ -96,13 +108,14 @@ const PasswordModal = () => {
                   value={password}
                   borderColor={attemptPassword && incorrectPassword ? 'red.200' : 'gray.200'}
                   focusBorderColor={attemptPassword && incorrectPassword ? 'red.200' : 'blue.500'}
-                  onChange={onChangePassword}
+                  onChange={onChangePasswordInput}
+                  onKeyUp={onKeyUpPasswordInput}
                 />
                 <InputRightElement width='4.5rem'>
                   <Button
                     height='1.75rem'
                     size='sm'
-                    onClick={onClickShowPassword}
+                    onClick={onClickShowPasswordButton}
                   >
                     {isShowPassword ? '가리기' : '보이기'}
                   </Button>
@@ -116,14 +129,14 @@ const PasswordModal = () => {
               marginRight='auto'
               colorScheme='red'
               variant='ghost'
-              onClick={onClickResetPassword}
+              onClick={onClickResetPasswordButton}
             >
               비밀번호 초기화
             </Button>
             <Button
               colorScheme='blue'
               disabled={password.length === 0}
-              onClick={onClickSave}
+              onClick={onClickSaveButton}
             >
               로그인
             </Button>
