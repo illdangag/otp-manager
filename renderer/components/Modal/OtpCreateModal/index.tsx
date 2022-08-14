@@ -131,7 +131,7 @@ const OtpCreateModal = () => {
     setSecret('');
     setIssuer('');
     setUser('');
-    setIssuerDescription('')
+    setIssuerDescription('');
     setUserDescription('');
     setDescription('');
     setDisabledEditIssuer(true);

@@ -25,7 +25,7 @@ const Layout = ({
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode, } = useColorMode();
 
   useEffect(() => {
     const validatePasswordHandler = (_event, response: ValidatePasswordResponse) => {
@@ -76,7 +76,7 @@ const Layout = ({
 
   const onClickDisplayMode = () => {
     toggleColorMode();
-  }
+  };
 
   const displayModeElement = (): ReactNode => {
     if (colorMode === 'dark') {

@@ -18,7 +18,6 @@ const LightModeIcon = ({
     if (color !== null) {
       return color;
     } else if (colorMode === 'light') {
-      console.log(colorMode);
       return 'gray.700';
     } else {
       return 'white.700';

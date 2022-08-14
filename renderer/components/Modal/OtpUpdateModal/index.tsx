@@ -55,7 +55,7 @@ const OtpUpdateModal = () => {
 
   const onChangeDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
-  }
+  };
 
   const onClickCancelButton = () => {
     setOtpUpdateModalState({
