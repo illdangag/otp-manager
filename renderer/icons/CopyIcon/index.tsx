@@ -1,4 +1,4 @@
-import { Icon, } from '@chakra-ui/react';
+import { Icon, useColorMode, } from '@chakra-ui/react';
 import * as CSS from 'csstype';
 
 interface Props {
@@ -11,10 +11,20 @@ interface Props {
  */
 const CopyIcon = ({
   boxSize = '1.2rem',
-  color = 'gray.700',
+  color,
 }: Props) => {
+  const { colorMode, } = useColorMode();
+  const getColor = (): string => {
+    if (color !== null) {
+      return color;
+    } else if (colorMode === 'light') {
+      return 'gray.700';
+    } else {
+      return 'white.700';
+    }
+  };
   return (
-    <Icon viewBox='0 0 24 24' color={color} boxSize={boxSize}>
+    <Icon viewBox='0 0 24 24' color={getColor()} boxSize={boxSize}>
       <g>
         <rect fill='none' height='24' width='24'/>
       </g>

@@ -46,10 +46,10 @@ const OtpItem = ({
       <Box padding='.8rem' borderWidth='1px' borderRadius='1rem'>
         <HStack>
           <VStack spacing={0}>
-            <Text width='100%' fontSize='lg' color='gray.700'>
+            <Text width='100%' fontSize='lg'>
               {otpCode.otp.issuerDescription ? otpCode.otp.issuerDescription : otpCode.otp.issuer}
             </Text>
-            <Text width='100%' fontSize='sm' color='gray.700'>
+            <Text width='100%' fontSize='sm'>
               {otpCode.otp.userDescription ? otpCode.otp.userDescription : otpCode.otp.user}
             </Text>
           </VStack>
@@ -60,14 +60,14 @@ const OtpItem = ({
         <Divider marginTop='.4rem' marginBottom='.4rem'/>
         {otpCode.otp.description && (
           <>
-            <Text fontSize='sm' color='gray.600'>{otpCode.otp.description}</Text>
+            <Text fontSize='sm'>{otpCode.otp.description}</Text>
             <Divider marginTop='.4rem' marginBottom='.4rem'/>
           </>
         )}
         <HStack>
-          <Text marginLeft='auto' marginRight='auto' fontSize='3xl' color={otpCode.progress < 80 ? 'gray.700' : 'red.300'}>{otpCode.code}</Text>
+          <Text marginLeft='auto' marginRight='auto' fontSize='3xl' color={otpCode.progress < 80 ? null : 'red.300'}>{otpCode.code}</Text>
           <CircularProgress value={otpCode.progress} color={otpCode.progress < 80 ? 'green.300' : 'red.300'}/>
-          <Button size='sm' color='gray.700' leftIcon={<CopyIcon color='gray.700'/>} onClick={onClickCopy}>복사</Button>
+          <Button size='sm' leftIcon={<CopyIcon/>} onClick={onClickCopy}>복사</Button>
         </HStack>
       </Box>
     </>

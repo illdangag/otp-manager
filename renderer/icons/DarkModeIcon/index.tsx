@@ -6,7 +6,10 @@ interface Props {
   color?: CSS.Property.Color,
 }
 
-const SignOutIcon = ({
+/**
+ * https://fonts.google.com/icons?selected=Material%20Icons%20Round%3Adark_mode%3A
+ */
+const DarkModeIcon = ({
   boxSize = '1.2rem',
   color,
 }: Props) => {
@@ -22,11 +25,10 @@ const SignOutIcon = ({
   };
   return (
     <Icon viewBox='0 0 24 24' color={getColor()} boxSize={boxSize}>
-      <path d='M0,0h24v24H0V0z' fill='none'/>
-      <path fill='currentColor' d='M5,5h6c0.55,0,1-0.45,1-1v0c0-0.55-0.45-1-1-1H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h6c0.55,0,1-0.45,1-1v0 c0-0.55-0.45-1-1-1H5V5z'/>
-      <path fill='currentColor' d='M20.65,11.65l-2.79-2.79C17.54,8.54,17,8.76,17,9.21V11h-7c-0.55,0-1,0.45-1,1v0c0,0.55,0.45,1,1,1h7v1.79 c0,0.45,0.54,0.67,0.85,0.35l2.79-2.79C20.84,12.16,20.84,11.84,20.65,11.65z'/>
+      <rect fill='none' height='24' width='24'/>
+      <path fill='currentColor' d='M11.01,3.05C6.51,3.54,3,7.36,3,12c0,4.97,4.03,9,9,9c4.63,0,8.45-3.5,8.95-8c0.09-0.79-0.78-1.42-1.54-0.95 c-0.84,0.54-1.84,0.85-2.91,0.85c-2.98,0-5.4-2.42-5.4-5.4c0-1.06,0.31-2.06,0.84-2.89C12.39,3.94,11.9,2.98,11.01,3.05z'/>
     </Icon>
   );
 };
 
-export default SignOutIcon;
+export default DarkModeIcon;

@@ -58,11 +58,11 @@ const OtpDeleteModal = () => {
           <Box>
             <Text fontSize='sm' fontWeight={600}>Issuer</Text>
             <Text fontSize='md'>{otp !== null ? otp.issuer : ''}</Text>
-            {otp !== null && otp.issuerDescription && <Text fontSize='md' color='gray.600'>{otp.issuerDescription}</Text>}
+            {otp !== null && otp.issuerDescription && <Text fontSize='sm'>{otp.issuerDescription}</Text>}
             <Divider marginTop='.4rem' marginBottom='.4rem'/>
             <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>User</Text>
             <Text fontSize='md'>{otp !== null ? otp.user : ''}</Text>
-            {otp !== null && otp.userDescription && <Text fontSize='md' color='gray.600'>{otp.userDescription}</Text>}
+            {otp !== null && otp.userDescription && <Text fontSize='sm'>{otp.userDescription}</Text>}
             {otp !== null && otp.description && (
               <>
                 <Divider marginTop='.4rem' marginBottom='.4rem'/>

@@ -1,9 +1,9 @@
 import React, { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
-import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, } from '@chakra-ui/react';
+import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
-import { AddIcon, SignOutIcon, } from '../../icons';
+import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons';
 
 import { useSetRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
@@ -24,6 +24,8 @@ const Layout = ({
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     const validatePasswordHandler = (_event, response: ValidatePasswordResponse) => {
@@ -72,7 +74,23 @@ const Layout = ({
     setPasswordStatusType('INVALIDATE');
   };
 
-  const menuElement = <Menu>
+  const onClickDisplayMode = () => {
+    toggleColorMode();
+  }
+
+  const displayModeElement = (): ReactNode => {
+    if (colorMode === 'dark') {
+      return (
+        <MenuItem icon={<LightModeIcon/>} onClick={onClickDisplayMode}>라이트모드</MenuItem>
+      );
+    } else {
+      return (
+        <MenuItem icon={<DarkModeIcon/>} onClick={onClickDisplayMode}>다크모드</MenuItem>
+      );
+    }
+  };
+
+  const menuElement = <Menu size='sm'>
     <MenuButton
       as={IconButton}
       aria-label='Options'
@@ -83,6 +101,8 @@ const Layout = ({
       <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
         OTP 추가
       </MenuItem>
+      {displayModeElement()}
+      <MenuDivider/>
       <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOutMenu}>
         로그아웃
       </MenuItem>
@@ -108,7 +128,7 @@ const Layout = ({
           paddingTop='.8rem'
           paddingBottom='.8rem'
           borderBottomWidth='1px'
-          borderBottomColor='gray.200'
+          borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
           // height='4rem'
         >
           <Text fontSize='lg' fontWeight={600}>OTP Manager</Text>
