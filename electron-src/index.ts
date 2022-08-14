@@ -10,25 +10,11 @@ import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import { v4, } from 'uuid';
 
-import {
-  ClearRequest,
-  ClearResponse,
-  CreateOtpRequest,
-  CreateOtpResponse,
-  DeleteOtpRequest,
-  DeleteOtpResponse,
-  GetOtpListRequest,
-  GetOtpListResponse,
-  MainPasswordRequest,
-  MainPasswordResponse,
-  Otp,
-  PasswordStatusType,
-  UpdateOtpRequest,
-  UpdateOtpResponse,
-  ValidatePasswordRequest,
-  ValidatePasswordResponse,
-} from './interfaces';
+import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse, GetOtpListRequest,
+  GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest, UpdateOtpResponse,
+  ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
+import { autoUpdater, } from 'electron-updater';
 
 const store = new Store();
 
@@ -58,6 +44,7 @@ app.on('ready', async () => {
     });
 
   void await mainWindow.loadURL(url);
+  void await autoUpdater.checkForUpdates();
   log.debug('[Application Start]');
 });
 
@@ -243,3 +230,26 @@ const otpTrim = (otp: Otp): void => {
   otp.userDescription = otp.userDescription.trim();
   otp.description = otp.description.trim();
 };
+
+// updater
+autoUpdater.on('checking-for-update', () => {
+  log.debug('checking for update...');
+});
+autoUpdater.on('update-available', () => {
+  log.info('update available');
+});
+autoUpdater.on('update-not-available', () => {
+  log.info('update not available');
+});
+autoUpdater.on('error', (err) => {
+  log.info('error: ' + err);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - current ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  log.info(log_message);
+})
+autoUpdater.on('update-downloaded', () => {
+  log.info('update downloaded');
+});
