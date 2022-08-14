@@ -148,7 +148,7 @@ const Layout = ({
           borderTopWidth='1px'
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
-          <Text fontSize='xs'>v0.0.1</Text>
+          <Text fontSize='xs'>v0.0.2</Text>
         </Flex>
       </Flex>
       <PasswordSetModal/>
