@@ -64,7 +64,7 @@ const IndexPage = () => {
   }
 
   return (
-    <Layout title={passwordStatusType}>
+    <Layout title='OTP Manager'>
       <VStack padding='.8rem'>
         {passwordStatusType === 'VALIDATE' && otpCodeList.length === 0 && <OtpEmpty/>}
         {otpCodeList.map((item, index) => (

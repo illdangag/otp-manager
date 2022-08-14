@@ -61,8 +61,8 @@ const PasswordResetModal = () => {
       <ModalContent>
         <ModalHeader>비밀번호 초기화</ModalHeader>
         <ModalBody pb={6}>
-          <Text fontSize='medium' color='gray.600'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
-          <Text marginTop='1rem' fontSize='medium' color='gray.600'>그래도 초기화 하시겠습니까?</Text>
+          <Text fontSize='md'>비밀번호를 초기화 하는 경우 등록해 놓은 OTP 데이터는 삭제 됩니다.</Text>
+          <Text marginTop='1rem' fontSize='md'>그래도 초기화 하시겠습니까?</Text>
         </ModalBody>
         <ModalFooter>
           <Button marginRight='1rem' onClick={onClickCancelButton}>취소</Button>

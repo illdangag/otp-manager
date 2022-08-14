@@ -80,13 +80,9 @@ const Layout = ({
 
   const displayModeElement = (): ReactNode => {
     if (colorMode === 'dark') {
-      return (
-        <MenuItem icon={<LightModeIcon/>} onClick={onClickDisplayMode}>라이트모드</MenuItem>
-      );
+      return (<MenuItem icon={<LightModeIcon/>} onClick={onClickDisplayMode}>라이트모드</MenuItem>);
     } else {
-      return (
-        <MenuItem icon={<DarkModeIcon/>} onClick={onClickDisplayMode}>다크모드</MenuItem>
-      );
+      return (<MenuItem icon={<DarkModeIcon/>} onClick={onClickDisplayMode}>다크모드</MenuItem>);
     }
   };
 
@@ -129,7 +125,6 @@ const Layout = ({
           paddingBottom='.8rem'
           borderBottomWidth='1px'
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
-          // height='4rem'
         >
           <Text fontSize='lg' fontWeight={600}>OTP Manager</Text>
           <Container position='absolute' right={0} width='auto'>
@@ -142,6 +137,19 @@ const Layout = ({
           </Container>
           <Spacer/>
         </VStack>
+        <Spacer/>
+        <Flex
+          as='footer'
+          justifyContent='flex-end'
+          paddingLeft='.4rem'
+          paddingRight='.4rem'
+          paddingTop='.2rem'
+          paddingBottom='.2rem'
+          borderTopWidth='1px'
+          borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
+        >
+          <Text fontSize='xs'>v0.0.1</Text>
+        </Flex>
       </Flex>
       <PasswordSetModal/>
       <PasswordModal/>

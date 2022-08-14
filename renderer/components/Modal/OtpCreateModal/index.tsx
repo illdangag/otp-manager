@@ -154,8 +154,8 @@ const OtpCreateModal = () => {
             onChange={onChangeUrl}
             tabIndex={1}
           />
-          <Text fontSize='sm' color='gray.600'>QR code URL을 복사하여 붙여넣으세요</Text>
-          <Divider marginTop='.8rem' marginBottom='.8rem' borderColor='gray.300'/>
+          <Text fontSize='sm'>QR code URL을 복사하여 붙여넣으세요</Text>
+          <Divider marginTop='.8rem' marginBottom='.8rem'/>
           <Text fontSize='sm' fontWeight={600}>Issuer</Text>
           <Input
             marginTop='.2rem'

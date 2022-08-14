@@ -108,7 +108,7 @@ ipcMain.on('validatePassword', (event: IpcMainEvent, request: ValidatePasswordRe
  * - 사용자가 비밀번호를 잊어버린 상황에서 사용하는 경우를 고려하여 비밀번호 검증을 하지 않고 데이터를 삭제
  */
 ipcMain.on('clear', (event: IpcMainEvent, request: ClearRequest) => {
-  log.debug('[clear]');
+  log.debug('[clear]', request);
   store.clear();
   const response: ClearResponse = {
     error: null,
@@ -235,7 +235,6 @@ const validatePassword = (password: string): PasswordStatusType => {
       return 'INVALIDATE';
     }
   }
-  log.debug(passwordStatusType);
   return passwordStatusType;
 };
 
