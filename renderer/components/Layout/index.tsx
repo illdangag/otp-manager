@@ -86,7 +86,7 @@ const Layout = ({
     }
   };
 
-  const menuElement = <Menu size='sm'>
+  const menuElement = <Menu size='sm' direction='rtl'>
     <MenuButton
       as={IconButton}
       aria-label='Options'
@@ -127,7 +127,7 @@ const Layout = ({
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
           <Text fontSize='lg' fontWeight={600}>OTP Manager</Text>
-          <Container position='absolute' right={0} width='auto'>
+          <Container position='absolute' left={0} width='auto'>
             {menuElement}
           </Container>
         </Center>
