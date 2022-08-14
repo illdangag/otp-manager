@@ -1,6 +1,6 @@
 import { useEffect, useState, } from 'react';
 import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast, Divider, Textarea,
 } from '@chakra-ui/react';
 
 import { useRecoilState, useSetRecoilState, } from 'recoil';
@@ -18,9 +18,11 @@ const OtpCreateModal = () => {
 
   const [issuerDescription, setIssuerDescription,] = useState<string>('');
   const [userDescription, setUserDescription,] = useState<string>('');
+  const [description, setDescription,] = useState<string>('');
 
   const [disabledEditIssuer, setDisabledEditIssuer,] = useState<boolean>(true);
   const [disabledEditUser, setDisabledEditUser,] = useState<boolean>(true);
+  const [disabledDescription, setDisabledDescription,] = useState<boolean>(true);
   const [disabledSaveButton, setDisabledSaveButton,] = useState<boolean>(true);
 
   const [otpCreateModalState, setOtpCreateModalState,] = useRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
@@ -87,22 +89,25 @@ const OtpCreateModal = () => {
     setIssuer(issuer);
     setDisabledEditIssuer(false);
     setDisabledEditUser(false);
+    setDisabledDescription(false);
     setDisabledSaveButton(false);
   };
 
   const onChangeUserDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value: string = event.target.value;
-    setUserDescription(value);
+    setUserDescription(event.target.value);
   };
 
   const onChangeIssuerDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value: string = event.target.value;
-    setIssuerDescription(value);
+    setIssuerDescription(event.target.value);
+  };
+
+  const onChangeDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
   };
 
   const onClickSave = () => {
     const otp: Otp = {
-      issuer, user, secret, issuerDescription, userDescription,
+      issuer, user, secret, issuerDescription, userDescription, description,
     };
     const request: CreateOtpRequest = {
       password: BrowserStorage.getPassword(), otp,
@@ -123,11 +128,15 @@ const OtpCreateModal = () => {
 
   function clear () {
     setUrl('');
-    setUser('');
     setSecret('');
     setIssuer('');
+    setUser('');
+    setIssuerDescription('')
+    setUserDescription('');
+    setDescription('');
     setDisabledEditIssuer(true);
     setDisabledEditUser(true);
+    setDisabledDescription(true);
     setDisabledSaveButton(true);
   }
 
@@ -137,27 +146,37 @@ const OtpCreateModal = () => {
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>
         <ModalBody pb={6}>
-          <Text>OTP URL</Text>
+          <Text fontWeight={600}>OTP URL</Text>
           <Input
+            size='md'
             placeholder='OPT URL'
             value={url}
             onChange={onChangeUrl}
           />
-          <Text marginTop='1rem'>Issuer</Text>
+          <Text fontSize='sm' color='gray.600'>QR code URL을 복사하여 붙여넣으세요</Text>
+          <Divider marginTop='.8rem' marginBottom='.8rem' borderColor='gray.300'/>
+          <Text fontSize='sm' fontWeight={600}>Issuer</Text>
           <Input
-            marginTop='0.2rem'
+            marginTop='.2rem'
             placeholder={issuer}
             value={issuerDescription}
             disabled={disabledEditIssuer}
             onChange={onChangeIssuerDescription}
           />
-          <Text marginTop='0.4rem'>User</Text>
+          <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>User</Text>
           <Input
-            marginTop='0.2rem'
+            marginTop='.2rem'
             placeholder={user}
             value={userDescription}
             disabled={disabledEditUser}
             onChange={onChangeUserDescription}
+          />
+          <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>설명</Text>
+          <Textarea
+            placeholder='간단한 설명을 입력해주세요'
+            disabled={disabledDescription}
+            value={description}
+            onChange={onChangeDescription}
           />
         </ModalBody>
         <ModalFooter>

@@ -58,6 +58,12 @@ const OtpItem = ({
           <IconButton aria-label='Delete OTP' variant='outline' size='sm' icon={<DeleteIcon/>} onClick={onClickDeleteButton}/>
         </HStack>
         <Divider marginTop='.4rem' marginBottom='.4rem'/>
+        {otpCode.otp.description && (
+          <>
+            <Text fontSize='sm' color='gray.600'>{otpCode.otp.description}</Text>
+            <Divider marginTop='.4rem' marginBottom='.4rem'/>
+          </>
+        )}
         <HStack>
           <Text marginLeft='auto' marginRight='auto' fontSize='3xl' color={otpCode.progress < 80 ? 'gray.700' : 'red.300'}>{otpCode.code}</Text>
           <CircularProgress value={otpCode.progress} color={otpCode.progress < 80 ? 'green.300' : 'red.300'}/>

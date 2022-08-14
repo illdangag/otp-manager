@@ -1,11 +1,11 @@
 import { useEffect, useState, } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, Textarea, } from '@chakra-ui/react';
 
 import { useRecoilState, useSetRecoilState, } from 'recoil';
 import { otpUpdateModalStateAtom, otpListAtom, } from '../../../store';
 
 import { BrowserStorage, } from '../../../utils';
-import { Otp, OtpUpdateModalState, UpdateOtpResponse, } from '../../../../electron-src/interfaces';
+import { Otp, OtpUpdateModalState, UpdateOtpRequest, UpdateOtpResponse, } from '../../../../electron-src/interfaces';
 
 const OtpUpdateModal = () => {
 
@@ -14,6 +14,7 @@ const OtpUpdateModal = () => {
   const [otp, setOtp,] = useState<Otp | null>(null);
   const [issuerDescription, setIssuerDescription,] = useState<string>('');
   const [userDescription, setUserDescription,] = useState<string>('');
+  const [description, setDescription,] = useState<string>('');
 
   const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
@@ -39,19 +40,22 @@ const OtpUpdateModal = () => {
       setOtp(otp);
       setIssuerDescription(otp.issuerDescription);
       setUserDescription(otp.userDescription);
+      setDescription(otp.description);
     }
   }, [otpUpdateModalState,]);
 
 
   const onChangeIssuer = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newIssuer: string = event.target.value;
-    setIssuerDescription(newIssuer);
+    setIssuerDescription(event.target.value);
   };
 
   const onChangeUser = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newUser: string = event.target.value;
-    setUserDescription(newUser);
+    setUserDescription(event.target.value);
   };
+
+  const onChangeDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  }
 
   const onClickCancelButton = () => {
     setOtpUpdateModalState({
@@ -60,11 +64,17 @@ const OtpUpdateModal = () => {
   };
 
   const onClickSaveButton = () => {
-    global.ipcRenderer.send('updateOtp', {
-      password: BrowserStorage.getPassword(), otp: {
-        id: otp.id, issuerDescription, userDescription,
-      } as Otp,
-    });
+    const updateOtp: Otp = {
+      ...otp,
+      issuerDescription,
+      userDescription,
+      description,
+    };
+    const request: UpdateOtpRequest = {
+      password: BrowserStorage.getPassword(),
+      otp: updateOtp,
+    };
+    global.ipcRenderer.send('updateOtp', request);
   };
 
   return (
@@ -73,19 +83,25 @@ const OtpUpdateModal = () => {
       <ModalContent>
         <ModalHeader>OTP 수정</ModalHeader>
         <ModalBody pb={6}>
-          <Text>Issuer</Text>
+          <Text fontSize='sm' fontWeight={600}>Issuer</Text>
           <Input
-            marginTop='0.2rem'
+            marginTop='.2rem'
             placeholder={otp !== null ? otp.issuer : ''}
             value={issuerDescription}
             onChange={onChangeIssuer}
           />
-          <Text marginTop='1rem'>User</Text>
+          <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>User</Text>
           <Input
-            marginTop='0.2rem'
+            marginTop='.2rem'
             placeholder={otp !== null ? otp.user : ''}
             value={userDescription}
             onChange={onChangeUser}
+          />
+          <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>설명</Text>
+          <Textarea
+            placeholder='간단한 설명을 입력해주세요'
+            value={description}
+            onChange={onChangeDescription}
           />
         </ModalBody>
         <ModalFooter>
@@ -93,7 +109,8 @@ const OtpUpdateModal = () => {
           <Button colorScheme='blue' disabled={otpUpdateModalState.otp === null} onClick={onClickSaveButton}>저장</Button>
         </ModalFooter>
       </ModalContent>
-    </Modal>);
+    </Modal>
+  );
 };
 
 export default OtpUpdateModal;

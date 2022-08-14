@@ -5,6 +5,7 @@ export type Otp = {
   secret: string
   userDescription: string
   issuerDescription: string
+  description: string
 }
 
 export type OtpCode = {

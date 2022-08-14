@@ -40,7 +40,7 @@ app.on('ready', async () => {
 
   const mainWindow = new BrowserWindow({
     width: 420,
-    height: 600,
+    height: 680,
     resizable: false,
     webPreferences: {
       nodeIntegration: false,
@@ -124,6 +124,7 @@ ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
   log.debug('[createOtp]');
   const password: string = request.password; // TODO 비밀번호 검증
   const otp: Otp = request.otp;
+  otpTrim(otp);
 
   const newOtpList: Otp[] = pushOtpList(password, otp, true);
   const response: CreateOtpResponse = {
@@ -154,12 +155,14 @@ ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
 ipcMain.on('updateOtp', (event: IpcMainEvent, request: UpdateOtpRequest) => {
   log.debug('[updateOtp]', request);
   const password: string = request.password; // TODO 비밀번호 검증
-  const newOtp: Otp = request.otp;
+  const updateOtp: Otp = request.otp;
+  otpTrim(updateOtp);
 
   const otpList: Otp[] = getOtpList(password, false);
-  const index: number = otpList.findIndex(item => item.id === newOtp.id!);
-  otpList[index].issuerDescription = newOtp.issuerDescription;
-  otpList[index].userDescription = newOtp.userDescription;
+  const index: number = otpList.findIndex(item => item.id === updateOtp.id!);
+  otpList[index].issuerDescription = updateOtp.issuerDescription;
+  otpList[index].userDescription = updateOtp.userDescription;
+  otpList[index].description = updateOtp.description;
   store.set('otpList', otpList);
 
   const response: UpdateOtpResponse = {
@@ -235,4 +238,10 @@ const validatePassword = (password: string): PasswordStatusType => {
   }
   log.debug(passwordStatusType);
   return passwordStatusType;
+};
+
+const otpTrim = (otp: Otp): void => {
+  otp.issuerDescription = otp.issuerDescription.trim();
+  otp.userDescription = otp.userDescription.trim();
+  otp.description = otp.description.trim();
 };

@@ -55,14 +55,21 @@ const OtpDeleteModal = () => {
       <ModalContent>
         <ModalHeader>OTP 삭제</ModalHeader>
         <ModalBody paddingBottom='2rem'>
-          <Box borderWidth='1px' borderRadius='.6rem' padding='.6rem'>
-            <Text fontSize='sm'>Issuer</Text>
-            <Text fontSize='xl'>{otp !== null ? otp.issuer : ''}</Text>
-            {otp !== null && otp.issuerDescription && <Text fontSize='md'>{otp.issuerDescription}</Text>}
-            <Divider marginTop='.8rem' marginBottom='.8rem'/>
-            <Text fontSize='sm'>User</Text>
-            <Text fontSize='xl'>{otp !== null ? otp.user : ''}</Text>
-            {otp !== null && otp.userDescription && <Text fontSize='md'>{otp.userDescription}</Text>}
+          <Box>
+            <Text fontSize='sm' fontWeight={600}>Issuer</Text>
+            <Text fontSize='md'>{otp !== null ? otp.issuer : ''}</Text>
+            {otp !== null && otp.issuerDescription && <Text fontSize='md' color='gray.600'>{otp.issuerDescription}</Text>}
+            <Divider marginTop='.4rem' marginBottom='.4rem'/>
+            <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>User</Text>
+            <Text fontSize='md'>{otp !== null ? otp.user : ''}</Text>
+            {otp !== null && otp.userDescription && <Text fontSize='md' color='gray.600'>{otp.userDescription}</Text>}
+            {otp !== null && otp.description && (
+              <>
+                <Divider marginTop='.4rem' marginBottom='.4rem'/>
+                <Text marginTop='.4rem' fontSize='sm' fontWeight={600}>설명</Text>
+                <Text fontSize='md'>{otp.description}</Text>
+              </>
+            )}
           </Box>
           <Text marginTop='1rem'>삭제 하시겠습니까?</Text>
         </ModalBody>
