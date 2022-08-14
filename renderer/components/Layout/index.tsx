@@ -75,9 +75,10 @@ const Layout = ({
           setFooterMessage('최신 버전');
           break;
         case 'download-progress':
-          setFooterMessage(`업데이트 진행중 (${response.message})...`);
+          setFooterMessage(`업데이트 진행중 (${response.message}%)...`);
           break;
         default:
+          setFooterMessage('');
           break;
       }
     };
@@ -177,7 +178,7 @@ const Layout = ({
         >
           <Text fontSize='xs'>{footerMessage}</Text>
           <Spacer/>
-          <Text fontSize='xs'>v0.0.2</Text>
+          <Text fontSize='xs'>v0.0.5</Text>
         </HStack>
       </Flex>
       <PasswordSetModal/>

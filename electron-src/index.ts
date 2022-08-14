@@ -274,7 +274,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   log.info(log_message);
   const autoUpdaterInfo: AutoUpdaterInfo = {
     status: 'download-progress',
-    message: progressObj.percent.toFixed(2),
+    message: progressObj.percent.toFixed(0),
   };
   webContents?.send('autoUpdater', autoUpdaterInfo);
 });
@@ -285,4 +285,5 @@ autoUpdater.on('update-downloaded', () => {
     message: '',
   };
   webContents?.send('autoUpdater', autoUpdaterInfo);
+  autoUpdater.quitAndInstall(true, true);
 });
