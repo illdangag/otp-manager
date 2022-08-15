@@ -68,8 +68,8 @@
       "icon": "./electron-src/assets/icons/app.icns"
     },
     "win": {
-      "target": "nsis",
-      "icon": "./src/main/assets/icons/app.png"
+      "target": "default",
+      "icon": "./electron-src/assets/icons/app.ico"
     }
   }
 }
