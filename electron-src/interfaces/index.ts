@@ -74,11 +74,6 @@ export interface DeleteOtpResponse extends IpcResponse {
   otpList: Otp[],
 }
 
-export interface AutoUpdaterInfo {
-  status: string,
-  message: string,
-}
-
 // recoil state
 interface ModalState {
   isOpen: boolean,

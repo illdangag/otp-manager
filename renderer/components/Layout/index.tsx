@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useState, } from 'react';
+import { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
 import {
-  Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, useToast, HStack,
+  Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, HStack,
 } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
@@ -10,7 +10,8 @@ import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons'
 import { useSetRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
 
-import { AutoUpdaterInfo, OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, } from '../../../electron-src/interfaces';
+import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
+  ValidatePasswordResponse, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 
 type Props = {
@@ -21,15 +22,11 @@ type Props = {
 const Layout = ({
   children, title,
 }: Props) => {
-
-  const [footerMessage, setFooterMessage,] = useState<string>('');
-
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
 
-  const toast = useToast();
   const { colorMode, toggleColorMode, } = useColorMode();
 
   useEffect(() => {
@@ -50,39 +47,9 @@ const Layout = ({
     global.ipcRenderer.addListener('validatePassword', validatePasswordHandler);
 
     const password: string = BrowserStorage.getPassword();
-    if (password !== '') {
-      global.ipcRenderer.send('validatePassword', {
-        password,
-      });
-    } else {
-      setPasswordModalState({
-        isOpen: true,
-      });
-    }
-
-    const autoUpdaterHandler = (_event, response: AutoUpdaterInfo) => {
-      console.debug(response);
-      switch (response.status) {
-        case 'update-downloaded':
-          toast({
-            title: 'OTP Manager가 업데이트 되었습니다. 다시 시작 해주시기 바랍니다.', position: 'top', isClosable: true, duration: 999999,
-          });
-          break;
-        case 'checking-for-update':
-          setFooterMessage('업데이트 확인중...');
-          break;
-        case 'update-not-available':
-          setFooterMessage('최신 버전');
-          break;
-        case 'download-progress':
-          setFooterMessage(`업데이트 진행중 (${response.message}%)...`);
-          break;
-        default:
-          setFooterMessage('');
-          break;
-      }
-    };
-    global.ipcRenderer.on('autoUpdater', autoUpdaterHandler);
+    global.ipcRenderer.send('validatePassword', {
+      password,
+    });
 
     return () => {
       global.ipcRenderer.removeListener('validatePassword', validatePasswordHandler);
@@ -176,7 +143,6 @@ const Layout = ({
           borderTopWidth='1px'
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
-          <Text fontSize='xs'>{footerMessage}</Text>
           <Spacer/>
           <Text fontSize='xs'>v0.0.5</Text>
         </HStack>

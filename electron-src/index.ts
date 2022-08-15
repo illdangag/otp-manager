@@ -10,25 +10,22 @@ import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import { v4, } from 'uuid';
 
-import { AutoUpdaterInfo, ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse,
+import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse,
   GetOtpListRequest, GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest,
   UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
 import { decrypt, encrypt, } from './cryptoUtils';
-import { autoUpdater, } from 'electron-updater';
 
 const store = new Store();
 
 const PASSWORD_VALIDATE: string = 'passwordValidate';
 
-let webContents: Electron.WebContents | null = null;
-
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
   await prepareNext('./renderer');
 
-  const mainWindow = new BrowserWindow({
+  const mainWindow: BrowserWindow = new BrowserWindow({
     width: 420,
-    height: 680,
+    height: 600,
     resizable: false,
     webPreferences: {
       nodeIntegration: false,
@@ -36,7 +33,6 @@ app.on('ready', async () => {
       preload: join(__dirname, 'preload.js'),
     },
   });
-  webContents = mainWindow.webContents;
 
   const url = isDev
     ? 'http://localhost:8000/'
@@ -47,7 +43,6 @@ app.on('ready', async () => {
     });
 
   void await mainWindow.loadURL(url);
-  void await autoUpdater.checkForUpdates();
   log.debug('[Application Start]');
 });
 
@@ -58,8 +53,8 @@ app.on('window-all-closed', () => {
 });
 
 /**
- * 메인 비밀번호 설정
- * - 메인 비밀번호를 새로 설정하게 하면 이전 비밀번호로 암호화되어 등록 되어 있는 OTP 데이터들을 삭제
+ * 비밀번호 설정
+ * - 비밀번호를 새로 설정하게 하면 이전 비밀번호로 암호화되어 등록 되어 있는 OTP 데이터들을 삭제
  */
 ipcMain.on('setMainPassword', (event: IpcMainEvent, request: MainPasswordRequest) => {
   const password: string = request.password;
@@ -233,57 +228,3 @@ const otpTrim = (otp: Otp): void => {
   otp.userDescription = otp.userDescription.trim();
   otp.description = otp.description.trim();
 };
-
-// updater
-autoUpdater.on('checking-for-update', () => {
-  log.info('checking for update...');
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'checking-for-update',
-    message: '',
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-});
-autoUpdater.on('update-available', () => {
-  log.info('update available');
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'update-available',
-    message: '',
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-});
-autoUpdater.on('update-not-available', () => {
-  log.info('update not available');
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'update-not-available',
-    message: '',
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-});
-autoUpdater.on('error', (err) => {
-  log.info('error: ' + err);
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'error',
-    message: err.message,
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-});
-autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = 'download speed: ' + progressObj.bytesPerSecond;
-  log_message = log_message + ' - current ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
-  log.info(log_message);
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'download-progress',
-    message: progressObj.percent.toFixed(0),
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-});
-autoUpdater.on('update-downloaded', () => {
-  log.info('update downloaded');
-  const autoUpdaterInfo: AutoUpdaterInfo = {
-    status: 'update-downloaded',
-    message: '',
-  };
-  webContents?.send('autoUpdater', autoUpdaterInfo);
-  autoUpdater.quitAndInstall(true, true);
-});
