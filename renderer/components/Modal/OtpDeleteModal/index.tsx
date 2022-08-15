@@ -1,11 +1,13 @@
+// react, element
 import { useEffect, useState, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Text, Box, Divider, useToast,
-} from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Text, Box, Divider,
+  useToast, } from '@chakra-ui/react';
 
+// state management
 import { useRecoilState, useSetRecoilState, } from 'recoil';
 import { otpDeleteModalStateAtom, otpListAtom, } from '../../../store';
 
+// interface, util
 import { DeleteOtpRequest, DeleteOtpResponse, Otp, OtpDeleteModalState, } from '../../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../../utils';
 

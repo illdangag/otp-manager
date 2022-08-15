@@ -13,7 +13,7 @@ import { v4, } from 'uuid';
 import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse,
   GetOtpListRequest, GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest,
   UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
-import { decrypt, encrypt, } from './cryptoUtils';
+import { decrypt, encrypt, } from './utils';
 
 const store = new Store();
 

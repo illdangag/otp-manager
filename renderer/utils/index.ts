@@ -10,8 +10,8 @@ class BrowserStorage {
     }
 
     const value: any = JSON.parse(passwordValue);
-    if (Date.now() > value.expire) {
-      localStorage.removeItem('password');
+    if (Date.now() > value.expire) { // 기준 시간이 지난 경우
+      localStorage.removeItem('password'); // 비밀번호 삭제
       return '';
     } else {
       return value.password;

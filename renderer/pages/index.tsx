@@ -1,12 +1,15 @@
+// react, element
 import { useEffect, useState, } from 'react';
 import { Container, VStack, } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import OtpItem from '../components/OtpItem';
 import OtpEmpty from '../components/OtpEmpty';
 
+// state management
 import { useRecoilValue, useRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, otpListAtom, } from '../store';
 
+// interface, util
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
 import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, PasswordStatusType, } from '../../electron-src/interfaces';

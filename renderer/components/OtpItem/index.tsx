@@ -1,11 +1,14 @@
-import {
-  Box, CircularProgress, Text, Button, HStack, useToast, IconButton, Spacer, VStack, Divider,
-} from '@chakra-ui/react';
-import { OtpCode, OtpDeleteModalState, OtpUpdateModalState, } from '../../../electron-src/interfaces';
-import { CopyIcon, EditIcon, } from '../../icons';
-import { DeleteIcon, } from '../../icons';
+// react, element
+import { Box, CircularProgress, Text, Button, HStack, useToast, IconButton, Spacer, VStack,
+  Divider, } from '@chakra-ui/react';
+import { CopyIcon, EditIcon, DeleteIcon, } from '../../icons';
+
+// state management
 import { useSetRecoilState, } from 'recoil';
 import { otpUpdateModalStateAtom, otpDeleteModalStateAtom, } from '../../store';
+
+// interface, util
+import { OtpCode, OtpDeleteModalState, OtpUpdateModalState, } from '../../../electron-src/interfaces';
 
 interface Props {
   otpCode: OtpCode,

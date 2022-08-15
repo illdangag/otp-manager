@@ -1,15 +1,17 @@
+// react, element
 import { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
-import {
-  Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider, HStack,
-} from '@chakra-ui/react';
+import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider,
+  HStack, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
 import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons';
 
+// state management
 import { useSetRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
 
+// interface, util
 import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
   ValidatePasswordResponse, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';

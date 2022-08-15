@@ -1,11 +1,13 @@
+// react, element
 import { useEffect, useState, useRef, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, InputGroup, InputRightElement, VStack, Text,
-} from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, InputGroup, InputRightElement, VStack,
+  Text, } from '@chakra-ui/react';
 
+// state management
 import { useSetRecoilState, useRecoilState, } from 'recoil';
 import { passwordStatusTypeAtom, passwordSetModalStateAtom, } from '../../../store';
 
+// interface, util
 import { BrowserStorage, } from '../../../utils';
 import { MainPasswordResponse, PasswordSetModalState, PasswordStatusType, } from '../../../../electron-src/interfaces';
 

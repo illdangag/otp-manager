@@ -1,14 +1,15 @@
+// react, element
 import { useEffect, } from 'react';
-import {
-  Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text,
-} from '@chakra-ui/react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
+  Text, } from '@chakra-ui/react';
 
+// state management
 import { useRecoilState, useSetRecoilState, } from 'recoil';
 import { passwordResetModalStateAtom, passwordModalStateAtom, passwordSetModalStateAtom, otpListAtom, } from '../../../store';
 
-import {
-  ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState, Otp,
-} from '../../../../electron-src/interfaces';
+// interface, util
+import { ClearRequest, ClearResponse, PasswordModalState, PasswordResetModalState, PasswordSetModalState,
+  Otp, } from '../../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../../utils';
 
 const PasswordResetModal = () => {
