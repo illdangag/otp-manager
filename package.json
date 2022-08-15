@@ -69,6 +69,7 @@
     },
     "win": {
       "target": "default",
+      "artifactName": "otp-manager-${version}.${ext}",
       "icon": "./electron-src/assets/icons/app.ico"
     }
   }
