@@ -12,7 +12,7 @@ import { passwordStatusTypeAtom, otpListAtom, } from '../store';
 // interface, util
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
-import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, PasswordStatusType, } from '../../electron-src/interfaces';
+import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType, } from '../../electron-src/interfaces';
 import { BrowserStorage, } from '../utils';
 
 const IndexPage = () => {
@@ -41,6 +41,12 @@ const IndexPage = () => {
   useInterval(() => {
     const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
     setOtpCodeList(newOtpCodeList);
+
+    const request: OtpTrayMenuRequest = {
+      password: BrowserStorage.getPassword(),
+      otpCodeList: newOtpCodeList,
+    };
+    global.ipcRenderer.send('setTrayMenu', request);
   }, intervalTime);
 
   function getOTPCode (otp: Otp, otpCodeList: OtpCode[]): OtpCode {

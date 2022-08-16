@@ -5,19 +5,22 @@ import Store from 'electron-store';
 import log from 'electron-log';
 
 // Packages
-import { app, BrowserWindow, ipcMain, IpcMainEvent, } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent, Menu, Tray, nativeImage, MenuItemConstructorOptions, clipboard, } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import { v4, } from 'uuid';
 
-import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse,
-  GetOtpListRequest, GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, PasswordStatusType, UpdateOtpRequest,
+import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse, GetOtpListRequest,
+  GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType, UpdateOtpRequest,
   UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
 import { decrypt, encrypt, } from './utils';
 
 const store = new Store();
 
 const PASSWORD_VALIDATE: string = 'passwordValidate';
+
+const trayIconBase64: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAhElEQVQ4y83SvQ2DQAyG4atuCtiHggVuIGaiu2FA1JGguupJhxQl4UcJSt7uk/zaluUQPkcrWyyy9kh5B4oCuv3u3CRRlNzYmSIjrSkhbwuzIq4pKuZtgekhT3xL0Bi9Y9Q8C4MthlfLbPJroVep9MeFOoQQ1BcKp1f6k7Oefo2zz3cZd9lz9fporhaNAAAAAElFTkSuQmCC';
+let tray: Tray | null = null;
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -43,6 +46,8 @@ app.on('ready', async () => {
     });
 
   void await mainWindow.loadURL(url);
+  const icon = nativeImage.createFromDataURL(trayIconBase64);
+  tray = new Tray(icon);
   log.debug('[Application Start]');
 });
 
@@ -125,10 +130,12 @@ ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
  */
 ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
   log.debug('[getOtpList]');
-  const password: string = request.password; // TODO 비밀번호 검증
+  const password: string = request.password;
+
+  const passwordStatusType: PasswordStatusType = validatePassword(password);
   const response: GetOtpListResponse = {
     error: null,
-    otpList: getOtpList(password, true),
+    otpList: passwordStatusType === 'VALIDATE' ? getOtpList(password, true) : [],
   };
   const callbackChannel: string = request.callbackChannel || 'getOtpList';
   event.sender.send(callbackChannel, response);
@@ -176,6 +183,37 @@ ipcMain.on('deleteOtp', (event: IpcMainEvent, request: DeleteOtpRequest) => {
   };
   const callbackChannel: string = request.callbackChannel || 'deleteOtp';
   event.sender.send(callbackChannel, response);
+});
+
+ipcMain.on('setTrayMenu', (_event: IpcMainEvent, request: OtpTrayMenuRequest) => {
+  const password: string = request.password;
+  const passwordStatusType: PasswordStatusType = validatePassword(password);
+
+  let optionList: MenuItemConstructorOptions[] | null = null;
+  if (tray == null) {
+    return;
+  }
+
+  if (!request.otpCodeList || passwordStatusType === 'NOT_SETTING' || passwordStatusType === 'INVALIDATE') {
+    optionList = [];
+  } else {
+    const otpCodeList: OtpCode[] = request.otpCodeList;
+    optionList = otpCodeList.map(item => {
+      const otp: Otp = item.otp;
+      const label: string = `${otp.issuerDescription ? otp.issuerDescription : otp.issuer}(${otp.userDescription ? otp.userDescription : otp.user}) - ${item.code}`;
+      return {
+        label,
+        type: 'normal',
+        click: async () => {
+          log.debug(`${item.otp.issuer} - ${item.code}`);
+          clipboard.writeText(item.code);
+        },
+      } as MenuItemConstructorOptions;
+    });
+  }
+
+  const menu = Menu.buildFromTemplate(optionList);
+  tray.setContextMenu(menu);
 });
 
 /////////////////////////////////

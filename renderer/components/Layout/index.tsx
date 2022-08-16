@@ -9,11 +9,12 @@ import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons'
 
 // state management
 import { useSetRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom, } from '../../store';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom,
+  otpListAtom, } from '../../store';
 
 // interface, util
 import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
-  ValidatePasswordResponse, } from '../../../electron-src/interfaces';
+  ValidatePasswordResponse, Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 
 type Props = {
@@ -28,6 +29,7 @@ const Layout = ({
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+  const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const { colorMode, toggleColorMode, } = useColorMode();
 
@@ -69,6 +71,7 @@ const Layout = ({
     setPasswordModalState({
       isOpen: true,
     });
+    setOtpList([]);
     setPasswordStatusType('INVALIDATE');
   };
 
