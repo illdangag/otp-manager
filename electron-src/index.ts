@@ -21,15 +21,17 @@ const PASSWORD_VALIDATE: string = 'passwordValidate';
 
 const trayIconBase64: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAhElEQVQ4y83SvQ2DQAyG4atuCtiHggVuIGaiu2FA1JGguupJhxQl4UcJSt7uk/zaluUQPkcrWyyy9kh5B4oCuv3u3CRRlNzYmSIjrSkhbwuzIq4pKuZtgekhT3xL0Bi9Y9Q8C4MthlfLbPJroVep9MeFOoQQ1BcKp1f6k7Oefo2zz3cZd9lz9fporhaNAAAAAElFTkSuQmCC';
 let tray: Tray | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
   await prepareNext('./renderer');
 
-  const mainWindow: BrowserWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 420,
     height: 600,
     resizable: false,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
@@ -212,6 +214,25 @@ ipcMain.on('setTrayMenu', (_event: IpcMainEvent, request: OtpTrayMenuRequest) =>
     });
   }
 
+  optionList.push(
+    {
+      type: 'separator',
+    },
+    {
+      label: '창 열기',
+      type: 'normal',
+      click: () => {
+        mainWindow?.show();
+      },
+    },
+    {
+      label: '창 닫기',
+      type: 'normal',
+      click: () => {
+        mainWindow?.close();
+      },
+    },
+  );
   const menu = Menu.buildFromTemplate(optionList);
   tray.setContextMenu(menu);
 });
