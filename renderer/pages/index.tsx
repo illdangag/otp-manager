@@ -58,7 +58,7 @@ const IndexPage = () => {
   useInterval(() => {
     const request: GetOtpListRequest = {
       password: BrowserStorage.getPassword(),
-    }
+    };
     global.ipcRenderer.send('getOtpList', request);
   }, intervalTime);
 
