@@ -50,6 +50,7 @@ app.on('ready', async () => {
   void await mainWindow.loadURL(url);
   const icon = nativeImage.createFromDataURL(trayIconBase64);
   tray = new Tray(icon);
+
   log.debug('[Application Start]');
 });
 
@@ -131,13 +132,14 @@ ipcMain.on('createOtp', (event: IpcMainEvent, request: CreateOtpRequest) => {
  * OTP 목록 조회
  */
 ipcMain.on('getOtpList', (event: IpcMainEvent, request: GetOtpListRequest) => {
-  log.debug('[getOtpList]');
+  // log.debug('[getOtpList]');
   const password: string = request.password;
 
   const passwordStatusType: PasswordStatusType = validatePassword(password);
   const response: GetOtpListResponse = {
     error: null,
     otpList: passwordStatusType === 'VALIDATE' ? getOtpList(password, true) : [],
+    passwordStatusType,
   };
   const callbackChannel: string = request.callbackChannel || 'getOtpList';
   event.sender.send(callbackChannel, response);
@@ -207,10 +209,29 @@ ipcMain.on('setTrayMenu', (_event: IpcMainEvent, request: OtpTrayMenuRequest) =>
         label,
         type: 'normal',
         click: async () => {
-          log.debug(`${item.otp.issuer} - ${item.code}`);
           clipboard.writeText(item.code);
         },
       } as MenuItemConstructorOptions;
+    });
+  }
+
+  if (passwordStatusType === 'NOT_SETTING') {
+    optionList.push({
+      label: 'OTP 초기 설정',
+      type: 'normal',
+      click: () => {
+        mainWindow?.show();
+        mainWindow?.focus();
+      },
+    });
+  } else if (passwordStatusType === 'INVALIDATE') {
+    optionList.push({
+      label: '로그인',
+      type: 'normal',
+      click: () => {
+        mainWindow?.show();
+        mainWindow?.focus();
+      },
     });
   }
 
@@ -219,14 +240,15 @@ ipcMain.on('setTrayMenu', (_event: IpcMainEvent, request: OtpTrayMenuRequest) =>
       type: 'separator',
     },
     {
-      label: '창 열기',
+      label: '열기',
       type: 'normal',
       click: () => {
         mainWindow?.show();
+        mainWindow?.focus();
       },
     },
     {
-      label: '창 닫기',
+      label: '종료',
       type: 'normal',
       click: () => {
         mainWindow?.close();

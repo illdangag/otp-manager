@@ -144,7 +144,7 @@ const OtpCreateModal = () => {
   }
 
   return (
-    <Modal isOpen={otpCreateModalState.isOpen} size='sm' onClose={() => {}}>
+    <Modal isOpen={otpCreateModalState.isOpen} size='full' scrollBehavior='inside' onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>

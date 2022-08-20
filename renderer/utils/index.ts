@@ -22,6 +22,7 @@ class BrowserStorage {
     const value: any = {
       password,
       expire: Date.now() + 12 * 60 * 60 * 1000, // 12시간 후 삭제
+      // expire: Date.now() + 3 * 1000, // 3초 후 삭제, 개발 및 테스트 용
     };
     localStorage.setItem('password', JSON.stringify(value));
   }

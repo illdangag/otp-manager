@@ -58,6 +58,7 @@ export interface GetOtpListRequest extends IpcRequest {
 }
 export interface GetOtpListResponse extends IpcResponse {
   otpList: Otp[],
+  passwordStatusType: PasswordStatusType,
 }
 
 export interface UpdateOtpRequest extends IpcRequest {

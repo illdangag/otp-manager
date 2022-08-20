@@ -27,6 +27,11 @@ const IndexPage = () => {
   useEffect(() => {
     const getOtpListHandler = (_event, response: GetOtpListResponse) => {
       setOtpList(response.otpList);
+      if (response.passwordStatusType === 'INVALIDATE') {
+        setPasswordModalState({
+          isOpen: true,
+        });
+      }
     };
     global.ipcRenderer.addListener('getOtpList', getOtpListHandler);
 
@@ -40,28 +45,21 @@ const IndexPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
+    setOtpCodeList(newOtpCodeList);
+    const request: OtpTrayMenuRequest = {
+      password: BrowserStorage.getPassword(),
+      otpCodeList: newOtpCodeList,
+    };
+    global.ipcRenderer.send('setTrayMenu', request);
+  }, [otpList,]);
+
   useInterval(() => {
-    const password: string = BrowserStorage.getPassword();
-    if (password === '') { // 비밀 번호가 입력되지 않거나 유효 시간이 초과 한 경우
-      setOtpList([]);
-      setOtpCodeList([]);
-      const request: OtpTrayMenuRequest = {
-        password,
-        otpCodeList: [],
-      };
-      global.ipcRenderer.send('setTrayMenu', request);
-      setPasswordModalState({
-        isOpen: true,
-      });
-    } else {
-      const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
-      setOtpCodeList(newOtpCodeList);
-      const request: OtpTrayMenuRequest = {
-        password,
-        otpCodeList: newOtpCodeList,
-      };
-      global.ipcRenderer.send('setTrayMenu', request);
+    const request: GetOtpListRequest = {
+      password: BrowserStorage.getPassword(),
     }
+    global.ipcRenderer.send('getOtpList', request);
   }, intervalTime);
 
   function getOTPCode (otp: Otp, otpCodeList: OtpCode[]): OtpCode {
