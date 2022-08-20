@@ -149,7 +149,7 @@ const Layout = ({
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
           <Spacer/>
-          <Text fontSize='xs'>v1.0.0</Text>
+          <Text fontSize='xs'>v1.1.0</Text>
         </HStack>
       </Flex>
       <PasswordSetModal/>
