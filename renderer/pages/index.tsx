@@ -6,19 +6,21 @@ import OtpItem from '../components/OtpItem';
 import OtpEmpty from '../components/OtpEmpty';
 
 // state management
-import { useRecoilValue, useRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, otpListAtom, } from '../store';
+import { useRecoilValue, useRecoilState, useSetRecoilState, } from 'recoil';
+import { passwordStatusTypeAtom, otpListAtom, passwordModalStateAtom, } from '../store';
 
 // interface, util
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
-import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType, } from '../../electron-src/interfaces';
+import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType,
+  PasswordModalState, } from '../../electron-src/interfaces';
 import { BrowserStorage, } from '../utils';
 
 const IndexPage = () => {
 
   const [otpCodeList, setOtpCodeList,] = useState<OtpCode[]>([]);
   const [otpList, setOtpList,] = useRecoilState<Otp[]>(otpListAtom);
+  const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const passwordStatusType = useRecoilValue<PasswordStatusType>(passwordStatusTypeAtom);
   const intervalTime: number = 500;
 
@@ -39,14 +41,27 @@ const IndexPage = () => {
   }, []);
 
   useInterval(() => {
-    const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
-    setOtpCodeList(newOtpCodeList);
-
-    const request: OtpTrayMenuRequest = {
-      password: BrowserStorage.getPassword(),
-      otpCodeList: newOtpCodeList,
-    };
-    global.ipcRenderer.send('setTrayMenu', request);
+    const password: string = BrowserStorage.getPassword();
+    if (password === '') { // 비밀 번호가 입력되지 않거나 유효 시간이 초과 한 경우
+      setOtpList([]);
+      setOtpCodeList([]);
+      const request: OtpTrayMenuRequest = {
+        password,
+        otpCodeList: [],
+      };
+      global.ipcRenderer.send('setTrayMenu', request);
+      setPasswordModalState({
+        isOpen: true,
+      });
+    } else {
+      const newOtpCodeList: OtpCode[] = otpList.map(item => getOTPCode(item, otpCodeList));
+      setOtpCodeList(newOtpCodeList);
+      const request: OtpTrayMenuRequest = {
+        password,
+        otpCodeList: newOtpCodeList,
+      };
+      global.ipcRenderer.send('setTrayMenu', request);
+    }
   }, intervalTime);
 
   function getOTPCode (otp: Otp, otpCodeList: OtpCode[]): OtpCode {
