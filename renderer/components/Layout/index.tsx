@@ -16,6 +16,7 @@ import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAt
 import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
   ValidatePasswordResponse, Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
+import packageJson from '../../../package.json';
 
 type Props = {
   children: ReactNode
@@ -149,7 +150,7 @@ const Layout = ({
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
           <Spacer/>
-          <Text fontSize='xs'>v1.1.0</Text>
+          <Text fontSize='xs'>v{packageJson.version}</Text>
         </HStack>
       </Flex>
       <PasswordSetModal/>
