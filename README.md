@@ -14,6 +14,7 @@
 ### OTP 추가
 
 <img width="420" src="https://user-images.githubusercontent.com/12287867/185795728-2c1ee6d7-b751-4bea-afde-13d1a899445c.png">
+&nbsp;
 <img width="420" src="https://user-images.githubusercontent.com/12287867/185795515-dd5a3e55-22ad-4435-a885-f076b5e00a66.png">
 
 화면의 `추가` 버튼 또는 메뉴의 `OTP 추가` 버튼을 이용하여 OTP를 추가
@@ -29,5 +30,7 @@ OTP URL에 QR 코드 URL을 입력하고 저장
 OTP 코드를 `복사` 버튼으로 클립보드에 복사
 
 <img width="343" src="https://user-images.githubusercontent.com/12287867/185795998-d9bb4eb1-e2f9-49a1-b6af-f20bd46878cc.png">
+&nbsp;
+<img width="343" src="https://user-images.githubusercontent.com/12287867/185815850-76e1e7dc-20b1-420a-a4cf-a8291217ac0a.PNG">
 
 시스템 트레이에서 OTP 항목을 선택하면 OTP 코드가 클립보드에 복사
