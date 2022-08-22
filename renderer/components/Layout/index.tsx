@@ -1,11 +1,12 @@
 // react, element
 import { ReactNode, useEffect, } from 'react';
 import Head from 'next/head';
+import { useRouter, } from 'next/router';
 import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider,
   HStack, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
-import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, } from '../../icons';
+import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, } from '../../icons';
 
 // state management
 import { useSetRecoilState, } from 'recoil';
@@ -21,10 +22,13 @@ import packageJson from '../../../package.json';
 type Props = {
   children: ReactNode
   title: string
+  titleElement?: ReactNode
 }
 
 const Layout = ({
-  children, title,
+  children,
+  title,
+  titleElement,
 }: Props) => {
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
@@ -33,6 +37,7 @@ const Layout = ({
   const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const { colorMode, toggleColorMode, } = useColorMode();
+  const router = useRouter();
 
   useEffect(() => {
     const validatePasswordHandler = (_event, response: ValidatePasswordResponse) => {
@@ -88,6 +93,10 @@ const Layout = ({
     }
   };
 
+  const onClickOpensourceLicense = async () => {
+    void await router.push('/license');
+  };
+
   const menuElement = <Menu size='sm' direction='rtl'>
     <MenuButton
       as={IconButton}
@@ -101,6 +110,9 @@ const Layout = ({
       </MenuItem>
       {displayModeElement()}
       <MenuDivider/>
+      <MenuItem icon={<InfoIcon/>} onClick={onClickOpensourceLicense}>
+        오픈소스 라이선스
+      </MenuItem>
       <MenuItem icon={<SignOutIcon/>} onClick={onClickSignOutMenu}>
         로그아웃
       </MenuItem>
@@ -110,7 +122,7 @@ const Layout = ({
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>OTP Manager</title>
         <meta charSet='utf-8'/>
         <meta name='viewport' content='initial-scale=1.0, width=device-width'/>
       </Head>
@@ -121,16 +133,16 @@ const Layout = ({
         <Center
           as='header'
           position='relative'
+          flexBasis='3.2rem'
+          flexShrink='0'
           paddingLeft='.4rem'
           paddingRight='.4rem'
-          paddingTop='.8rem'
-          paddingBottom='.8rem'
           borderBottomWidth='1px'
           borderBottomColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
         >
-          <Text fontSize='lg' fontWeight={600}>OTP Manager</Text>
+          <Text fontSize='lg' fontWeight={600}>{title}</Text>
           <Container position='absolute' left={0} width='auto'>
-            {menuElement}
+            {titleElement ? titleElement : menuElement}
           </Container>
         </Center>
         <VStack overflow='auto'>

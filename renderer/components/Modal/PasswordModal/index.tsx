@@ -33,9 +33,6 @@ const PasswordModal = () => {
         });
         setOptList(response.otpList);
         clear();
-        toast({
-          title: '로그인 성공', status: 'success', duration: 2000, position: 'top',
-        });
       } else {
         setIncorrectPassword(true);
         if (passwordStatusType === 'INVALIDATE') {
