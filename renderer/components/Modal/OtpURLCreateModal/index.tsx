@@ -6,13 +6,13 @@ import {
 
 // state management
 import { useRecoilState, useSetRecoilState, } from 'recoil';
-import { otpCreateModalStateAtom, otpListAtom, } from '../../../store';
+import { otpURLCreateModalStateAtom, otpListAtom, } from '../../../store';
 
 // interface, util
-import { CreateOtpRequest, CreateOtpResponse, Otp, OtpCreateModalState, } from '../../../../electron-src/interfaces';
+import { CreateOtpRequest, CreateOtpResponse, Otp, OtpURLCreateModalState, } from '../../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../../utils';
 
-const OtpCreateModal = () => {
+const OtpURLCreateModal = () => {
 
   const [url, setUrl,] = useState<string>('');
   const [issuer, setIssuer,] = useState<string>('');
@@ -28,14 +28,14 @@ const OtpCreateModal = () => {
   const [disabledDescription, setDisabledDescription,] = useState<boolean>(true);
   const [disabledSaveButton, setDisabledSaveButton,] = useState<boolean>(true);
 
-  const [otpCreateModalState, setOtpCreateModalState,] = useRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+  const [otpURLCreateModalState, setOtpURLCreateModalState,] = useRecoilState<OtpURLCreateModalState>(otpURLCreateModalStateAtom);
   const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
   const toast = useToast();
 
   useEffect(() => {
     const setOtpHandler = (_event, response: CreateOtpResponse) => {
       if (response.error === null) {
-        setOtpCreateModalState({
+        setOtpURLCreateModalState({
           isOpen: false,
         });
         setOtpList(response.otpList);
@@ -123,7 +123,7 @@ const OtpCreateModal = () => {
   };
 
   const onClickCancel = () => {
-    setOtpCreateModalState({
+    setOtpURLCreateModalState({
       isOpen: false,
     });
     clear();
@@ -144,7 +144,7 @@ const OtpCreateModal = () => {
   }
 
   return (
-    <Modal isOpen={otpCreateModalState.isOpen} size='full' scrollBehavior='inside' onClose={() => {}}>
+    <Modal isOpen={otpURLCreateModalState.isOpen} size='full' scrollBehavior='inside' onClose={() => {}}>
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>
@@ -195,4 +195,4 @@ const OtpCreateModal = () => {
   );
 };
 
-export default OtpCreateModal;
+export default OtpURLCreateModal;

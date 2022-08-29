@@ -4,15 +4,16 @@ import { OtpListIcon, } from '../../icons';
 
 // state management
 import { useSetRecoilState, } from 'recoil';
-import { otpCreateModalStateAtom, } from '../../store';
+import { otpURLCreateModalStateAtom, } from '../../store';
 
 // interface, util
-import { OtpCreateModalState, } from '../../../electron-src/interfaces';
+import { OtpURLCreateModalState, } from '../../../electron-src/interfaces';
 
 const OtpEmpty = () => {
-  const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+  const setOtpURLCreateModalState = useSetRecoilState<OtpURLCreateModalState>(otpURLCreateModalStateAtom);
+
   const onClickAddButton = () => {
-    setOtpCreateModalState({
+    setOtpURLCreateModalState({
       isOpen: true,
     });
   };

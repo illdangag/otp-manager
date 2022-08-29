@@ -89,7 +89,7 @@ export interface PasswordModalState extends ModalState {
 }
 export interface PasswordResetModalState extends ModalState {
 }
-export interface OtpCreateModalState extends ModalState {
+export interface OtpURLCreateModalState extends ModalState {
 }
 export interface OtpUpdateModalState extends ModalState {
   otp: Otp | null,

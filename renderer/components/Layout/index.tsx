@@ -5,16 +5,16 @@ import { useRouter, } from 'next/router';
 import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider,
   HStack, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
-import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpCreateModal, PasswordResetModal, } from '../Modal';
+import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpURLCreateModal, PasswordResetModal, } from '../Modal';
 import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, } from '../../icons';
 
 // state management
 import { useSetRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpCreateModalStateAtom,
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpURLCreateModalStateAtom,
   otpListAtom, } from '../../store';
 
 // interface, util
-import { OtpCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
+import { OtpURLCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
   ValidatePasswordResponse, Otp, } from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 import packageJson from '../../../package.json';
@@ -33,7 +33,7 @@ const Layout = ({
   const setPasswordStatusType = useSetRecoilState<PasswordStatusType>(passwordStatusTypeAtom);
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
-  const setOtpCreateModalState = useSetRecoilState<OtpCreateModalState>(otpCreateModalStateAtom);
+  const setOtpURLCreateModalState = useSetRecoilState<OtpURLCreateModalState>(otpURLCreateModalStateAtom);
   const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const { colorMode, toggleColorMode, } = useColorMode();
@@ -67,7 +67,7 @@ const Layout = ({
   }, []);
 
   const onClickCreateButton = () => {
-    setOtpCreateModalState({
+    setOtpURLCreateModalState({
       isOpen: true,
     });
   };
@@ -168,7 +168,7 @@ const Layout = ({
       <PasswordSetModal/>
       <PasswordModal/>
       <PasswordResetModal/>
-      <OtpCreateModal/>
+      <OtpURLCreateModal/>
       <OtpUpdateModal/>
       <OtpDeleteModal/>
     </>
