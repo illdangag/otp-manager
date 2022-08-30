@@ -6,7 +6,7 @@ import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spac
   HStack, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
 import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpURLCreateModal, PasswordResetModal, } from '../Modal';
-import { AddIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, } from '../../icons';
+import { LinkIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, QrCodeIcon, } from '../../icons';
 
 // state management
 import { useSetRecoilState, } from 'recoil';
@@ -66,7 +66,7 @@ const Layout = ({
     };
   }, []);
 
-  const onClickCreateButton = () => {
+  const onClickURLCreateButton = () => {
     setOtpURLCreateModalState({
       isOpen: true,
     });
@@ -97,7 +97,7 @@ const Layout = ({
     void await router.push('/license');
   };
 
-  const menuElement = <Menu size='sm' direction='rtl'>
+  const menuElement = <Menu direction='rtl'>
     <MenuButton
       as={IconButton}
       aria-label='Options'
@@ -105,9 +105,13 @@ const Layout = ({
       variant='outline'
     />
     <MenuList>
-      <MenuItem icon={<AddIcon/>} onClick={onClickCreateButton}>
-        OTP 추가
+      <MenuItem icon={<LinkIcon/>} onClick={onClickURLCreateButton}>
+        URL로 OTP 추가
       </MenuItem>
+      <MenuItem icon={<QrCodeIcon/>}>
+        QR Code로 OTP 추가
+      </MenuItem>
+      <MenuDivider/>
       {displayModeElement()}
       <MenuDivider/>
       <MenuItem icon={<InfoIcon/>} onClick={onClickOpensourceLicense}>

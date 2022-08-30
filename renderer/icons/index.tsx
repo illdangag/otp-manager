@@ -9,5 +9,7 @@ import DarkModeIcon from './DarkModeIcon';
 import InfoIcon from './InfoIcon';
 import NavigateNextIcon from './NavigateNext';
 import NavigateBefore from  './NavigateBefore';
+import LinkIcon from './LinkIcon';
+import QrCodeIcon from './QrCodeIcon';
 export { SignOutIcon, AddIcon, EditIcon, DeleteIcon, OtpListIcon, CopyIcon, LightModeIcon, DarkModeIcon, InfoIcon, NavigateNextIcon,
-  NavigateBefore, };
+  NavigateBefore, LinkIcon, QrCodeIcon, };
