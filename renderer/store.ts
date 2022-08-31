@@ -1,8 +1,8 @@
 import { atom, } from 'recoil';
 import { v4, } from 'uuid';
 import {
-  PasswordStatusType, OtpUpdateModalState, OtpURLCreateModalState, PasswordResetModalState, PasswordModalState, PasswordSetModalState,
-  Otp, OtpDeleteModalState, } from '../electron-src/interfaces';
+  PasswordStatusType, OtpUpdateModalState, OtpURLCreateModalState, PasswordResetModalState, PasswordModalState, PasswordSetModalState, Otp, OtpDeleteModalState, OtpQrCodeCreateModalState,
+} from '../electron-src/interfaces';
 
 export const otpListAtom = atom<Otp[]>({
   key: 'otpListAtom/' + v4(),
@@ -37,6 +37,13 @@ export const passwordResetModalStateAtom = atom<PasswordResetModalState>({
 
 export const otpURLCreateModalStateAtom = atom<OtpURLCreateModalState>({
   key: 'otpURLCreateModalStateAtom/' + v4(),
+  default: {
+    isOpen: false,
+  },
+});
+
+export const otpQrCodeCreateModalStateAtom = atom<OtpQrCodeCreateModalState>({
+  key: 'otpQrCodeCreateModalStateAtom/' + v4(),
   default: {
     isOpen: false,
   },

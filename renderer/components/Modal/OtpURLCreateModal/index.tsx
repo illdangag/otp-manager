@@ -1,8 +1,7 @@
 // react, element
 import { useEffect, useState, } from 'react';
-import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast, Divider, Textarea,
-} from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Text, useToast, Divider,
+  Textarea, } from '@chakra-ui/react';
 
 // state management
 import { useRecoilState, useSetRecoilState, } from 'recoil';
@@ -148,7 +147,7 @@ const OtpURLCreateModal = () => {
       <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>
       <ModalContent>
         <ModalHeader>OTP 추가</ModalHeader>
-        <ModalBody pb={6}>
+        <ModalBody paddingBottom='1rem'>
           <Text fontWeight={600}>OTP URL</Text>
           <Input
             size='md'

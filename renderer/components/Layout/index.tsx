@@ -5,17 +5,20 @@ import { useRouter, } from 'next/router';
 import { Container, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, VStack, Text, Center, useColorMode, MenuDivider,
   HStack, } from '@chakra-ui/react';
 import { HamburgerIcon, } from '@chakra-ui/icons';
-import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpURLCreateModal, PasswordResetModal, } from '../Modal';
+import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpURLCreateModal, PasswordResetModal,
+  OtpQrCodeCreateModal, } from '../Modal';
 import { LinkIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, QrCodeIcon, } from '../../icons';
 
 // state management
-import { useSetRecoilState, } from 'recoil';
-import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpURLCreateModalStateAtom,
-  otpListAtom, } from '../../store';
+import { useRecoilState, useSetRecoilState, } from 'recoil';
+import {
+  passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpURLCreateModalStateAtom, otpListAtom, otpQrCodeCreateModalStateAtom,
+} from '../../store';
 
 // interface, util
-import { OtpURLCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType,
-  ValidatePasswordResponse, Otp, } from '../../../electron-src/interfaces';
+import {
+  OtpURLCreateModalState, PasswordModalState, PasswordSetModalState, PasswordStatusType, ValidatePasswordResponse, Otp, OtpQrCodeCreateModalState,
+} from '../../../electron-src/interfaces';
 import { BrowserStorage, } from '../../utils';
 import packageJson from '../../../package.json';
 
@@ -34,6 +37,7 @@ const Layout = ({
   const setPasswordSetModalState = useSetRecoilState<PasswordSetModalState>(passwordSetModalStateAtom);
   const setPasswordModalState = useSetRecoilState<PasswordModalState>(passwordModalStateAtom);
   const setOtpURLCreateModalState = useSetRecoilState<OtpURLCreateModalState>(otpURLCreateModalStateAtom);
+  const setOtpQrCodeCreateModalState = useSetRecoilState<OtpQrCodeCreateModalState>(otpQrCodeCreateModalStateAtom);
   const setOtpList = useSetRecoilState<Otp[]>(otpListAtom);
 
   const { colorMode, toggleColorMode, } = useColorMode();
@@ -68,6 +72,12 @@ const Layout = ({
 
   const onClickURLCreateButton = () => {
     setOtpURLCreateModalState({
+      isOpen: true,
+    });
+  };
+
+  const onClickCqCodeCreateButton = () => {
+    setOtpQrCodeCreateModalState({
       isOpen: true,
     });
   };
@@ -108,7 +118,7 @@ const Layout = ({
       <MenuItem icon={<LinkIcon/>} onClick={onClickURLCreateButton}>
         URL로 OTP 추가
       </MenuItem>
-      <MenuItem icon={<QrCodeIcon/>}>
+      <MenuItem icon={<QrCodeIcon/>} onClick={onClickCqCodeCreateButton}>
         QR Code로 OTP 추가
       </MenuItem>
       <MenuDivider/>
@@ -173,6 +183,7 @@ const Layout = ({
       <PasswordModal/>
       <PasswordResetModal/>
       <OtpURLCreateModal/>
+      <OtpQrCodeCreateModal/>
       <OtpUpdateModal/>
       <OtpDeleteModal/>
     </>
