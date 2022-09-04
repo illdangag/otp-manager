@@ -1,4 +1,4 @@
-export type Otp = {
+export interface Otp {
   id?: string
   user: string
   issuer: string
@@ -8,7 +8,7 @@ export type Otp = {
   description: string
 }
 
-export type OtpCode = {
+export interface OtpCode {
   otp: Otp,
   code: string
   progress: number

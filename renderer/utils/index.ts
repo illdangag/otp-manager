@@ -1,3 +1,5 @@
+import { Otp, } from '../../electron-src/interfaces';
+
 class BrowserStorage {
   static clear (): void {
     localStorage.clear();
@@ -28,4 +30,43 @@ class BrowserStorage {
   }
 }
 
-export { BrowserStorage, };
+const getOTPData = (data: string): Otp => {
+  if (data.indexOf('otpauth://totp/') === -1) {
+    throw Error('is not otp data');
+  }
+
+  let user: string = '';
+  let secret: string = '';
+  let issuer: string = '';
+
+  const otpAuthData: String[] = data.split('otpauth://totp/');
+  if (otpAuthData.length !== 2) {
+    throw Error('is not otp data');
+  }
+
+  user = decodeURIComponent(otpAuthData[1].split('?')[0]);
+
+  const queryString: string = otpAuthData[1].split('?')[1];
+  const keyValueList: string[] = queryString.split('&');
+  for (const keyValue of keyValueList) {
+    const data: string[] = keyValue.split('=');
+    const key: string = data[0];
+    const value: string = data[1];
+    if (key.toLocaleLowerCase() === 'secret') {
+      secret = decodeURIComponent(value);
+    } else if (key.toLocaleLowerCase() === 'issuer') {
+      issuer = decodeURIComponent(value);
+    }
+  }
+
+  return {
+    user,
+    secret,
+    issuer,
+    userDescription: '',
+    issuerDescription: '',
+    description: '',
+  };
+};
+
+export { BrowserStorage, getOTPData, };

@@ -1,0 +1,7 @@
+.root {
+  .qrcodeInputFile {
+    &::file-selector-button {
+      display: none;
+    }
+  }
+}

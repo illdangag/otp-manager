@@ -9,7 +9,7 @@ import { otpURLCreateModalStateAtom, otpListAtom, } from '../../../store';
 
 // interface, util
 import { CreateOtpRequest, CreateOtpResponse, Otp, OtpURLCreateModalState, } from '../../../../electron-src/interfaces';
-import { BrowserStorage, } from '../../../utils';
+import { BrowserStorage, getOTPData, } from '../../../utils';
 
 const OtpURLCreateModal = () => {
 
@@ -52,47 +52,19 @@ const OtpURLCreateModal = () => {
     const targetValue: string = event.target.value;
     setUrl(targetValue);
     const decodedValue: string = decodeURIComponent(targetValue);
-    if (decodedValue.indexOf('otpauth://totp/') === -1) {
+
+    try {
+      const otp: Otp = getOTPData(decodedValue);
+      setUser(otp.user);
+      setSecret(otp.secret);
+      setIssuer(otp.issuer);
+      setDisabledEditIssuer(false);
+      setDisabledEditUser(false);
+      setDisabledDescription(false);
+      setDisabledSaveButton(false);
+    } catch {
       clear();
-      return;
     }
-
-    let user: string = '';
-    let secret: string = '';
-    let issuer: string = '';
-
-    const otpAuthData: String[] = decodedValue.split('otpauth://totp/');
-    if (otpAuthData.length !== 2) {
-      clear();
-      return;
-    }
-    user = otpAuthData[1].split('?')[0];
-
-    const queryString: string = otpAuthData[1].split('?')[1];
-    const keyValueList: string[] = queryString.split('&');
-    for (const keyValue of keyValueList) {
-      const data: string[] = keyValue.split('=');
-      const key: string = data[0];
-      const value: string = data[1];
-      if (key.toLocaleLowerCase() === 'secret') {
-        secret = value;
-      } else if (key.toLocaleLowerCase() === 'issuer') {
-        issuer = value;
-      }
-    }
-
-    if (user === '' || secret === '' || issuer === '') {
-      clear();
-      return;
-    }
-
-    setUser(user);
-    setSecret(secret);
-    setIssuer(issuer);
-    setDisabledEditIssuer(false);
-    setDisabledEditUser(false);
-    setDisabledDescription(false);
-    setDisabledSaveButton(false);
   };
 
   const onChangeUserDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +79,7 @@ const OtpURLCreateModal = () => {
     setDescription(event.target.value);
   };
 
-  const onClickSave = () => {
+  const onClickSaveButton = () => {
     const otp: Otp = {
       issuer, user, secret, issuerDescription, userDescription, description,
     };
@@ -187,7 +159,7 @@ const OtpURLCreateModal = () => {
         </ModalBody>
         <ModalFooter>
           <Button marginRight={3} onClick={onClickCancel}>취소</Button>
-          <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSave} tabIndex={4}>저장</Button>
+          <Button colorScheme='blue' disabled={disabledSaveButton} onClick={onClickSaveButton} tabIndex={4}>저장</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

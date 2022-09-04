@@ -10,10 +10,9 @@ import { OtpUpdateModal, OtpDeleteModal, PasswordModal, PasswordSetModal, OtpURL
 import { LinkIcon, SignOutIcon, LightModeIcon, DarkModeIcon, InfoIcon, QrCodeIcon, } from '../../icons';
 
 // state management
-import { useRecoilState, useSetRecoilState, } from 'recoil';
-import {
-  passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpURLCreateModalStateAtom, otpListAtom, otpQrCodeCreateModalStateAtom,
-} from '../../store';
+import { useSetRecoilState, } from 'recoil';
+import { passwordStatusTypeAtom, passwordSetModalStateAtom, passwordModalStateAtom, otpURLCreateModalStateAtom, otpListAtom,
+  otpQrCodeCreateModalStateAtom, } from '../../store';
 
 // interface, util
 import {
