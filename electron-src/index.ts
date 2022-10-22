@@ -12,7 +12,7 @@ import { v4, } from 'uuid';
 
 import { ClearRequest, ClearResponse, CreateOtpRequest, CreateOtpResponse, DeleteOtpRequest, DeleteOtpResponse, GetOtpListRequest,
   GetOtpListResponse, MainPasswordRequest, MainPasswordResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType, UpdateOtpRequest,
-  UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, } from './interfaces';
+  UpdateOtpResponse, ValidatePasswordRequest, ValidatePasswordResponse, OtpSwapRequest, OtpSwapResponse, } from './interfaces';
 import { decrypt, encrypt, } from './utils';
 
 const store = new Store();
@@ -186,6 +186,26 @@ ipcMain.on('deleteOtp', (event: IpcMainEvent, request: DeleteOtpRequest) => {
     otpList: getOtpList(password, true),
   };
   const callbackChannel: string = request.callbackChannel || 'deleteOtp';
+  event.sender.send(callbackChannel, response);
+});
+
+/**
+ * OTP 순서 변경
+ */
+ipcMain.on('swapOtp', (event: IpcMainEvent, request: OtpSwapRequest) => {
+  log.debug('[swapOtp]');
+  const password: string = request.password;
+  const from: number = request.from;
+  const to: number = request.to;
+  const otpList: Otp[] = getOtpList(password, false);
+  const newOtpList: Otp[]  = otpList.splice(from, 1);
+  otpList.splice(to, 0, newOtpList[0]);
+  store.set('otpList', otpList);
+
+  const response: OtpSwapResponse = {
+    error: null,
+  };
+  const callbackChannel: string = request.callbackChannel || 'swapOtp';
   event.sender.send(callbackChannel, response);
 });
 

@@ -79,6 +79,13 @@ export interface OtpTrayMenuRequest extends IpcRequest {
   otpCodeList: OtpCode[],
 }
 
+export interface OtpSwapRequest extends IpcRequest {
+  from: number;
+  to: number;
+}
+export interface OtpSwapResponse extends IpcResponse {
+}
+
 // recoil state
 interface ModalState {
   isOpen: boolean,

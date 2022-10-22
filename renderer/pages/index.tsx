@@ -1,6 +1,9 @@
-// react, element
+// style
+import styles from './index.module.scss';
+// react
 import { useEffect, useState, } from 'react';
 import { Container, VStack, } from '@chakra-ui/react';
+import { DragDropContext, Droppable, Draggable, resetServerContext, } from 'react-beautiful-dnd';
 import Layout from '../components/Layout';
 import OtpItem from '../components/OtpItem';
 import OtpEmpty from '../components/OtpEmpty';
@@ -12,8 +15,9 @@ import { passwordStatusTypeAtom, otpListAtom, passwordModalStateAtom, } from '..
 // interface, util
 import totp from 'totp-generator';
 import { useInterval, } from 'usehooks-ts';
-import { GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType,
-  PasswordModalState, } from '../../electron-src/interfaces';
+import {
+  GetOtpListRequest, GetOtpListResponse, Otp, OtpCode, OtpTrayMenuRequest, PasswordStatusType, PasswordModalState, OtpSwapRequest,
+} from '../../electron-src/interfaces';
 import { BrowserStorage, } from '../utils';
 
 const IndexPage = () => {
@@ -85,18 +89,72 @@ const IndexPage = () => {
     };
   }
 
+  const onDragEnd = (result) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const from: number = result.source.index;
+    const to: number = result.destination.index;
+
+    const swapOtpList: Otp[] = [...otpList,];
+    const newOtpList: Otp[]  = swapOtpList.splice(from, 1);
+    swapOtpList.splice(to, 0, newOtpList[0]);
+    setOtpList(swapOtpList);
+    const request: OtpSwapRequest = {
+      password: BrowserStorage.getPassword(),
+      from,
+      to,
+    };
+    global.ipcRenderer.send('swapOtp', request);
+  };
+
   return (
     <Layout title='OTP Manager'>
       <VStack padding='.8rem'>
         {passwordStatusType === 'VALIDATE' && otpCodeList.length === 0 && <OtpEmpty/>}
-        {otpCodeList.map((item, index) => (
-          <Container key={index} padding='0'>
-            <OtpItem otpCode={item}/>
-          </Container>
-        ))}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId='droppable' >
+            {(provided, _snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className={styles.droppable}
+              >
+                {otpCodeList.map((item, index) => (
+                  <Draggable
+                    key={item.otp.id}
+                    draggableId={item.otp.id}
+                    index={index}
+                  >
+                    {(provided, _snapshot) => (
+                      <Container
+                        marginBottom={'1rem'}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        padding='0'
+                        width='100%'
+                      >
+                        <OtpItem otpCode={item}/>
+                      </Container>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </VStack>
     </Layout>
   );
 };
 
 export default IndexPage;
+
+export async function getInitialProps () {
+  resetServerContext();
+  return { props: { data: [], }, };
+}
